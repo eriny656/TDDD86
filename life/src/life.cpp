@@ -10,15 +10,11 @@
 
 using namespace std;
 
-string convertToOutput(Grid<char>);
+string convertToOutput(Grid<char> &grid);
 void tick(Grid<char> &grid);
 void animate(Grid<char> &grid);
 
 int main() {
-
-    // TODO: Finish the program!
-
-
     string line;
     string filename;
     int running = 1;
@@ -86,52 +82,20 @@ int main() {
 
 
 int checkCellsInMinorSquare(int x, int y, Grid<char> grid) {
-
-
-    int GRID_Y = grid.numRows()-1;
-    int GRID_X = grid.numCols()-1;
     int cellsAmt = 0;
-    int row = y-1;
-    int col = x-1;
-    int maxRow = y+1;
-    int maxCol = x+1;
     char tempChar;
 
-
-    if (y == 0) {
-        row = y;
-        if (x == 0) {
-            col = x;
-        }
-        else if (x == GRID_X) {
-            maxCol = x;
-        }
-    }
-    else if (x == 0) {
-        col = x;
-        if (y == GRID_Y) {
-            maxRow = y;
-        }
-    }
-    else if (x == GRID_X) {
-        maxCol = x;
-        if (y == GRID_Y) {
-            maxRow = y;
-        }
-    }
-    else if (y == GRID_Y) {
-        maxRow = y;
-    }
-
-    for (int count_y = row; count_y <= maxRow; ++count_y) {
-        for (int count_x = col; count_x <= maxCol; ++count_x) {
-            tempChar = grid[count_y][count_x];
+    for (int row = y-1; row <= y+1; ++row) {
+        for (int col = x-1; col <= x+1; ++col) {
+            if (!grid.inBounds(row, col)) {
+                continue;
+            }
+            tempChar = grid[row][col];
             if (tempChar == 'X') {
                 ++cellsAmt;
             }
         }
     }
-
     return cellsAmt;
 }
 
@@ -178,7 +142,7 @@ void animate(Grid<char>& grid) {
 }
 
 
-string convertToOutput(Grid<char> grid){
+string convertToOutput(Grid<char>& grid){
     string gridString = "";
     for (int y = 0; y < grid.numRows(); ++y) {
         for (int x = 0; x < grid.numCols(); ++x) {
