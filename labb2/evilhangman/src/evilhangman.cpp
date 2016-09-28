@@ -3,40 +3,54 @@
 #include <string>
 #include <map>
 #include <vector>
-#include <unordered_map>
+#include <unordered_set>
 
 using namespace std;
 
 const string ALPHABET  = "abcdefghijklmnopqrstuvwxyz";
-vector<string> startGame(int strLength);
-bool step(vector<string> &dictionary, string &guess);
-void chooseNewWordSet(vector<string> &dictionary, char &input, string &guess);
+
+vector<string> startGame(unsigned strLength);
+char selectCharacter(vector<string> &dictionary, vector<char> &selectedCharacters, unordered_set<char> &alphabetLetters);
+void step(vector<string> &dictionary, string &guess, char &input);
+void getGuess(string &word, string &searchString, char &input);
+void insertMapVector(vector<string> &tempVec, map<string, vector<string>> &wordSets, string &searchString, unsigned &biggestLength, string &word);
+
 
 int main() {
-    int strLength = 5;
-    int currentStep;
-    int maxStep;
+    unordered_set<char> alphabetLetters;
 
-    vector<string> dictionary;
+    for(char letter: ALPHABET){
+        alphabetLetters.insert(letter);
+    }
 
     cout << "Welcome to Hangman." << endl;
     cout << "Press 'a' to start playing! Press 'q' to quit!" << endl;
 
     while(true){
-        currentStep = 0;
-        maxStep = 15;
+        vector<char> selectedCharacters;
+        char currentSelectedCharacter;
         string guess;
-        for(int i=0; i < strLength; i++) {
+        vector<string> dictionary;
+        unsigned strLength = 5;
+        unsigned currentStep = 0;
+        unsigned maxStep = 15;
+
+        for(unsigned i=0; i < strLength; i++) {
             guess.push_back('-');
         }
-        dictionary = startGame(strLength);
-        if(dictionary.empty()) {
+        if((dictionary = startGame(strLength)).empty()) {
             break;
         }
-        while(step(dictionary, guess)) {
+
+        while(true) {
+            while((currentSelectedCharacter = selectCharacter(dictionary, selectedCharacters, alphabetLetters)) == '/') continue;
+
+            step(dictionary, guess, currentSelectedCharacter);
+
             cout << "Progress:" << endl << guess << endl;
             ++currentStep;
             cout << "Current step is " << currentStep << " out of " << maxStep << endl;
+
             if(currentStep > maxStep) {
                 // Player lose the game
                 cout << "You lost the game!" << endl;
@@ -55,7 +69,7 @@ int main() {
     return 0;
 }
 
-vector<string> startGame(int strLength) {
+vector<string> startGame(unsigned strLength) {
     vector<string> dictionary;
     string word;
     ifstream dicStream;
@@ -83,64 +97,59 @@ vector<string> startGame(int strLength) {
     return startGame(strLength);
 }
 
-bool step(vector<string> &dictionary, string &guess) {
-    char input;
-
+char selectCharacter(vector<string> &dictionary, vector<char> &selectedCharacters, unordered_set<char> &alphabetLetters){
     for(auto i = dictionary.begin(); i < dictionary.end(); ++i) {
         cout << *i << ", ";
     }
+
+    char input;
+
+    if(!selectedCharacters.empty()){
+        cout << endl << endl <<  "You have guessed:" << endl;
+        for(auto i = selectedCharacters.begin(); i < selectedCharacters.end(); ++i){
+            cout << *i << ", ";
+        }
+        cout << endl << endl;
+    }
+
     cout << "Guess a character ;)" << endl;
-
-
-    // TODO: Check so we dont check the same letter again!! List?
-
     cin >> input;
-    for(char alphabetLetter:ALPHABET) {
-        if (input == alphabetLetter){
-            chooseNewWordSet(dictionary, input, guess);
-            return true;
+
+    if(alphabetLetters.find(input) == alphabetLetters.end()){
+        cout << "You must enter a valid letter of the alphabet!" << endl;
+        return '/';
+    }
+
+    for(char character: selectedCharacters){
+        if(input == character){
+            cout << "You have already entered this character!" << endl;
+            return '/';
         }
     }
-    cout << "Invalid input!" << endl;
-    return true;
+
+    selectedCharacters.push_back(input);
+    return input;
 }
 
-void chooseNewWordSet(vector<string> &dictionary, char &input, string &guess) {
+void step(vector<string> &dictionary, string &guess, char &input) {
     map<string, vector<string>> wordSets;
-    int biggestLength = 0;
+    unsigned biggestLength = 0;
     string searchString;
     vector<string> tempVec;
+
+
+
 
     // guess = "----"    input = "a"
     // Create new search string that matches the "a"s in each word in the dictionary
     for(string word:dictionary) {
         searchString.clear(); // Moved out
-        for(char character:word) {
+        getGuess(word, searchString, input);
 
-            if(character == input) {
-                searchString.push_back(character);
-            }
-            else{
-                searchString.push_back('-');
-            }
-        }
-
-        // searchString == key,
-        // We check if there is a vector in wordSets with a key that matches our searchString.
         tempVec.clear(); // Moved out
-        if (wordSets.find(searchString) != wordSets.end() ) {
-            tempVec = wordSets.at(searchString);
-        }
-        tempVec.push_back(word);
-        wordSets.erase(searchString);
-        if(tempVec.size() > biggestLength){
-            biggestLength = tempVec.size();
-            wordSets.emplace_hint(wordSets.begin(), searchString, tempVec);
-        }
-        else {
-            wordSets.emplace_hint(wordSets.end(), searchString, tempVec);
-        }
+        insertMapVector(tempVec, wordSets, searchString, biggestLength, word);
     }
+
     dictionary = wordSets.begin()->second;
 
     string c1 = wordSets.begin()->first;
@@ -151,3 +160,38 @@ void chooseNewWordSet(vector<string> &dictionary, char &input, string &guess) {
         cout << guess << endl;
     }
 }
+
+void getGuess(string &word, string &searchString, char &input) {
+    for(char character:word) {
+        if(character == input) {
+            searchString.push_back(character);
+        }
+        else{
+            searchString.push_back('-');
+        }
+    }
+}
+
+void insertMapVector(vector<string> &tempVec, map<string, vector<string>> &wordSets, string &searchString, unsigned &biggestLength, string &word) {
+    // searchString == key,
+    // We check if there is a vector in wordSets with a key that matches our searchString.
+    map<string, vector<string>>::iterator ourIterator = wordSets.find(searchString);
+
+    if (ourIterator != wordSets.end() ) {
+        tempVec = ourIterator->second;
+    }
+    tempVec.push_back(word);
+    wordSets.erase(searchString);
+    if(tempVec.size() > biggestLength){
+        biggestLength = tempVec.size();
+        wordSets.insert(wordSets.begin(), pair<string, vector<string>> (searchString, tempVec));
+
+        //wordSets.emplace/*_hint*/(/*wordSets.begin(), */searchString, tempVec);
+    }
+    else {
+        wordSets.insert(wordSets.end(), pair<string, vector<string>> (searchString, tempVec));
+        //wordSets.emplace/*_hint*/(/*wordSets.end(), */searchString, tempVec);
+    }
+}
+
+

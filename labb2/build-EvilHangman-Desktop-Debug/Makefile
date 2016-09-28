@@ -14,7 +14,7 @@ CC            = gcc
 CXX           = g++
 DEFINES       = -DQT_QML_DEBUG -DQT_DECLARATIVE_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB
 CFLAGS        = -m64 -pipe -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
-CXXFLAGS      = -m64 -pipe -std=c++11 -g -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
+CXXFLAGS      = -m64 -pipe -std=c++11 -g -Wall -W -D_REENTRANT -fPIE $(DEFINES)
 INCPATH       = -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64 -I../evilhangman/lib -I/usr/include/qt5 -I/usr/include/qt5/QtGui -I/usr/include/qt5/QtCore -I.
 LINK          = g++
 LFLAGS        = -m64
@@ -160,8 +160,8 @@ all: Makefile $(TARGET)
 $(TARGET):  $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 	{ test -n "$(DESTDIR)" && DESTDIR="$(DESTDIR)" || DESTDIR=.; } && test $$(gdb --version | sed -e 's,[^0-9][^0-9]*\([0-9]\)\.\([0-9]\).*,\1\2,;q') -gt 72 && gdb --nx --batch --quiet -ex 'set confirm off' -ex "save gdb-index $$DESTDIR" -ex quit '$(TARGET)' && test -f $(TARGET).gdb-index && objcopy --add-section '.gdb_index=$(TARGET).gdb-index' --set-section-flags '.gdb_index=readonly' '$(TARGET)' '$(TARGET)' && rm -f $(TARGET).gdb-index || true 
-	cp -r "/home/sambl126/Documents/TDDD86/labb2/evilhangman/res/di.txt" "/home/sambl126/Documents/TDDD86/labb2/build-EvilHangman-Desktop-Debug" 
-	 cp -r "/home/sambl126/Documents/TDDD86/labb2/evilhangman/res/dictionary.txt" "/home/sambl126/Documents/TDDD86/labb2/build-EvilHangman-Desktop-Debug" 
+	cp -r "/home/eriny656/Documents/TDDD86/TDDD86/labb2/evilhangman/res/di.txt" "/home/eriny656/Documents/TDDD86/TDDD86/labb2/build-EvilHangman-Desktop-Debug" 
+	 cp -r "/home/eriny656/Documents/TDDD86/TDDD86/labb2/evilhangman/res/dictionary.txt" "/home/eriny656/Documents/TDDD86/TDDD86/labb2/build-EvilHangman-Desktop-Debug" 
 	
 
 Makefile: ../evilhangman/EvilHangman.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \

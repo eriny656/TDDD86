@@ -8,7 +8,7 @@ SOURCES = $$PWD/src/*.cpp
 HEADERS = $$PWD/src/*.h
 HEADERS += $$PWD/lib/*.h
 
-QMAKE_CXXFLAGS += -std=c++11 -g
+QMAKE_CXXFLAGS += -std=c++11
 
 INCLUDEPATH += $$PWD/lib/
 
