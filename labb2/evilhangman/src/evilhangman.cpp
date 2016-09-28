@@ -3,6 +3,7 @@
 #include <string>
 #include <map>
 #include <vector>
+#include <unordered_map>
 
 using namespace std;
 
@@ -107,12 +108,13 @@ bool step(vector<string> &dictionary, string &guess) {
 void chooseNewWordSet(vector<string> &dictionary, char &input, string &guess) {
     map<string, vector<string>> wordSets;
     int biggestLength = 0;
+    string searchString;
+    vector<string> tempVec;
 
     // guess = "----"    input = "a"
     // Create new search string that matches the "a"s in each word in the dictionary
     for(string word:dictionary) {
-
-        string searchString;
+        searchString.clear(); // Moved out
         for(char character:word) {
 
             if(character == input) {
@@ -125,8 +127,7 @@ void chooseNewWordSet(vector<string> &dictionary, char &input, string &guess) {
 
         // searchString == key,
         // We check if there is a vector in wordSets with a key that matches our searchString.
-
-        vector<string> tempVec;
+        tempVec.clear(); // Moved out
         if (wordSets.find(searchString) != wordSets.end() ) {
             tempVec = wordSets.at(searchString);
         }
