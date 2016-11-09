@@ -160,7 +160,7 @@ all: Makefile $(TARGET)
 $(TARGET):  $(OBJECTS)  
 	$(LINK) $(LFLAGS) -o $(TARGET) $(OBJECTS) $(OBJCOMP) $(LIBS)
 	{ test -n "$(DESTDIR)" && DESTDIR="$(DESTDIR)" || DESTDIR=.; } && test $$(gdb --version | sed -e 's,[^0-9][^0-9]*\([0-9]\)\.\([0-9]\).*,\1\2,;q') -gt 72 && gdb --nx --batch --quiet -ex 'set confirm off' -ex "save gdb-index $$DESTDIR" -ex quit '$(TARGET)' && test -f $(TARGET).gdb-index && objcopy --add-section '.gdb_index=$(TARGET).gdb-index' --set-section-flags '.gdb_index=readonly' '$(TARGET)' '$(TARGET)' && rm -f $(TARGET).gdb-index || true 
-	cp -r "/home/sambl126/Documents/TDDD86/labb2/wordchain/res/dictionary.txt" "/home/sambl126/Documents/TDDD86/labb2/build-WordChain-Desktop-Debug" 
+	cp -r "/home/eriny656/Documents/TDDD86/TDDD86/labb2/wordchain/res/dictionary.txt" "/home/eriny656/Documents/TDDD86/TDDD86/labb2/build-WordChain-Desktop-Debug" 
 	
 
 Makefile: ../wordchain/WordChain.pro /usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++-64/qmake.conf /usr/lib/x86_64-linux-gnu/qt5/mkspecs/features/spec_pre.prf \

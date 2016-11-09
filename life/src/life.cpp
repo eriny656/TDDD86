@@ -1,6 +1,15 @@
-// This is the CPP file you will edit and turn in.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header
+// This file creates an instance of a text based
+// representation of the Game of Life; a simulation
+// of the lifecycle of a bacteria colony.
+//
+// Rules:
+// 1. A cell with 1 or fewer neighbors dies
+// 2. Locations with 2 neighbors remains stable
+// 3. A cell with 4 or more neighbors dies
+//
+// Created by
+// Eric Nylander (eriny656)
+// Samuel Blomqvist (sambl126)
 
 #include <string>
 #include <iostream>
@@ -10,7 +19,7 @@
 
 using namespace std;
 
-string convertToOutput(Grid<char> &grid);
+string convertToOutput(const Grid<char> &grid);
 void tick(Grid<char> &grid);
 void animate(Grid<char> &grid);
 
@@ -35,10 +44,8 @@ int main() {
     Grid<char> gameField;
 
     if (myfile.is_open()) {
+        myfile >> rows >> columns;
         getline(myfile, line);
-        rows = stoi(line);
-        getline(myfile, line);
-        columns = stoi(line);
 
         gameField.resize(rows, columns);
         for (int y = 0; y < rows; ++y) {
@@ -81,7 +88,7 @@ int main() {
 }
 
 
-int checkCellsInMinorSquare(int x, int y, Grid<char> grid) {
+int checkCellsInMinorSquare(int x, int y, const Grid<char>& grid) {
     int cellsAmt = 0;
     char tempChar;
 
@@ -101,15 +108,15 @@ int checkCellsInMinorSquare(int x, int y, Grid<char> grid) {
 
 
 void tick(Grid<char>& grid) {
-    int GRID_Y = grid.numRows();
-    int GRID_X = grid.numCols();
+    int gridY = grid.numRows();
+    int gridX = grid.numCols();
     int cellsAmt;
     char tempChar;
 
-    Grid<char> tempGrid = Grid<char>(GRID_Y, GRID_X);
+    Grid<char> tempGrid = Grid<char>(gridY, gridX);
 
-    for (int y = 0; y < GRID_Y; ++y) {
-        for (int x = 0; x < GRID_X; ++x) {
+    for (int y = 0; y < gridY; ++y) {
+        for (int x = 0; x < gridX; ++x) {
             cellsAmt = checkCellsInMinorSquare(x, y, grid);
             tempChar = grid[y][x];
             if (tempChar == 'X') {
@@ -131,18 +138,16 @@ void tick(Grid<char>& grid) {
 }
 
 void animate(Grid<char>& grid) {
-    int running = 1;
-
-    while (running) {
+    while (true) {
         clearConsole();
         tick(grid);
         cout << convertToOutput(grid) << endl;
-        pause(100);
+        pause(500);
     }
 }
 
 
-string convertToOutput(Grid<char>& grid){
+string convertToOutput(const Grid<char>& grid){
     string gridString = "";
     for (int y = 0; y < grid.numRows(); ++y) {
         for (int x = 0; x < grid.numCols(); ++x) {

@@ -1,3 +1,7 @@
+// This file takes two words as parameters and
+// finds the shortest chain of words with a single
+// edited letter between the two.
+
 #include <fstream>
 #include <iostream>
 #include <string>
@@ -27,7 +31,6 @@ int main() {
 
     startWord = input.substr(0, input.find(" "));
     endWord = input.substr(input.find(" ")+1, startWord.length()+1);
-    cout << startWord << endWord << endl;
 
     chain = wordChain(startWord, endWord);
     while (!chain.empty()) {
@@ -35,7 +38,8 @@ int main() {
         chain.pop();
         output.append(", ");
     }
-    cout << "Chain from data back to code:" << endl << output << endl << "Have a nice day." << endl;
+    cout << "Chain from " << endWord << " back to " <<  startWord << ":" << endl;
+    cout << output << endl << "Have a nice day." << endl;
 
 
     // TODO: Finish the program!
@@ -98,7 +102,7 @@ stack<string> wordChain(string w1, string w2) {
                 string changedWord = tempWord;
                 changedWord[iWord] = alphabetLetter;
                 if (dictionary.find(changedWord) != dictionary.end()) {
-                    cout << "WE FOUND SOMETHING : " << changedWord << endl;
+                    // cout << "WE FOUND SOMETHING : " << changedWord << endl;
                     if (chainedWords.find(changedWord) == chainedWords.end()) {
                         chainedWords.insert(changedWord);
                         stack<string> newStack = tempStack;
