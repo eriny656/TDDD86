@@ -1,6 +1,10 @@
 // This file takes two words as parameters and
 // finds the shortest chain of words with a single
 // edited letter between the two.
+//
+// Created by
+// Eric Nylander (eriny656)
+// Samuel Blomqvist (sambl126)
 
 #include <fstream>
 #include <iostream>
@@ -11,10 +15,9 @@
 using namespace std;
 
 const string ALPHABET  = "abcdefghijklmnopqrstuvwxyz";
-stack<string> wordChain(string, string);
+stack<string> wordChain(const string&, const string&);
 
 int main() {
-    string input;
     string output;
     string startWord;
     string endWord;
@@ -26,13 +29,11 @@ int main() {
     cout << endl;
 
     cout << "Please type two words: ";
-    getline(cin, input);
 
-
-    startWord = input.substr(0, input.find(" "));
-    endWord = input.substr(input.find(" ")+1, startWord.length()+1);
+    cin >> startWord >> endWord;
 
     chain = wordChain(startWord, endWord);
+
     while (!chain.empty()) {
         output.append(chain.top());
         chain.pop();
@@ -41,13 +42,10 @@ int main() {
     cout << "Chain from " << endWord << " back to " <<  startWord << ":" << endl;
     cout << output << endl << "Have a nice day." << endl;
 
-
-    // TODO: Finish the program!
-
     return 0;
 }
 
-stack<string> wordChain(string w1, string w2) {
+stack<string> wordChain(const string &w1, const string &w2) {
     queue<stack<string>> chainPaths;
     stack<string> path;
     string word;
@@ -56,7 +54,7 @@ stack<string> wordChain(string w1, string w2) {
     unordered_set<string> chainedWords;
     dicStream.open("dictionary.txt");
 
-    while(getline(dicStream, word)) {
+    while(dicStream >> word) {
         dictionary.insert(word);
     }
 
@@ -79,6 +77,9 @@ stack<string> wordChain(string w1, string w2) {
             return tempStack;
         }
 
+        // Determines the letter that was last edited in the stack
+        // This letter does not need to be checked in the current
+        // Iteration. This also solves the issue of looping paths
         if(!tempStack.empty()){
             string secondToLast = tempStack.top();
             for(unsigned int i = 0; i < tempWord.length(); ++i) {
@@ -89,21 +90,22 @@ stack<string> wordChain(string w1, string w2) {
             }
         }
 
-        for (unsigned int iWord = 0; iWord < tempWord.length(); ++iWord) {
-            if(iWord == checkedLetter){
+        for (unsigned int charIndex = 0; charIndex < tempWord.length(); ++charIndex) {
+            if(charIndex == checkedLetter){
                 continue;
             }
 
-
             for (char alphabetLetter:ALPHABET) {
-                if (tempWord[iWord] == alphabetLetter){
+                if (tempWord[charIndex] == alphabetLetter){
                     continue;
                 }
                 string changedWord = tempWord;
-                changedWord[iWord] = alphabetLetter;
+                changedWord[charIndex] = alphabetLetter;
+
                 if (dictionary.find(changedWord) != dictionary.end()) {
-                    // cout << "WE FOUND SOMETHING : " << changedWord << endl;
+
                     if (chainedWords.find(changedWord) == chainedWords.end()) {
+
                         chainedWords.insert(changedWord);
                         stack<string> newStack = tempStack;
                         newStack.push(tempWord);
@@ -117,7 +119,7 @@ stack<string> wordChain(string w1, string w2) {
             }
         }
     }
-    cout << "Crash xD" << endl;
+    return stack<string>();
 }
 
 

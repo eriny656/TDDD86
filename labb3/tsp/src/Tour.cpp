@@ -1,8 +1,9 @@
-// This is the .cpp file you will edit and turn in.
-// We have provided a skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header
+// This file contains the implementation of
+// the Tour object.
+//
+// Created by
+// Eric Nylander (eriny656)
+// Samuel Blomqvist (sambl126)
 
 #include <iostream>
 #include "Tour.h"
@@ -10,30 +11,26 @@
 #include "Point.h"
 #include <array>
 
+
+/*
+ * The Tour constructor
+ */
 Tour::Tour()
 {
-    // TODO: write this member
+    mainNode = new Node(Point(0,0), nullptr);
 }
 
-
-Tour::Tour(Point a, Point b, Point c, Point d)
-{
-    Node *nodeA = new Node(a, nullptr);
-    Node *nodeB = new Node(b, nullptr);
-    Node *nodeC = new Node(c, nullptr);
-    Node *nodeD = new Node(d, nodeA);
-    nodeA->next = nodeB;
-    nodeB->next = nodeC;
-    nodeC->next = nodeD;
-
-    mainNode = nodeA;
-}
-
+/*
+ * The Tour destructor
+ */
 Tour::~Tour()
 {
-    // TODO: write this member
+    delete mainNode;
 }
 
+/*
+ * Prints out the information of each Node in the tour.
+ */
 void Tour::show()
 {
     Node *tmpNode = mainNode->next;
@@ -48,6 +45,13 @@ void Tour::show()
     }
 }
 
+/*
+ * Draws the tour to a scene.
+ *
+ *  * param:   QGraphicsScene *scene:
+ *                  a pointer to the scene we
+ *                  can draw our nodes onto.
+ */
 void Tour::draw(QGraphicsScene *scene)
 {
     Node *tmpNode = mainNode->next;
@@ -62,6 +66,12 @@ void Tour::draw(QGraphicsScene *scene)
     while(tmpNode != mainNode->next);
 }
 
+/*
+ * Calculates the amount of Nodes in the tour.
+ *
+ *  * return: integer   an integer stating the amount
+ *                      of nodes in the tour.
+ */
 int Tour::size()
 {
     Node *tmpNode = mainNode->next;
@@ -78,6 +88,13 @@ int Tour::size()
     return size;
 }
 
+/*
+ * Calculates the total distance between
+ * all Nodes in the tour.
+ *
+ *  * return: double    a double representing the
+ *                      total distance.
+ */
 double Tour::distance()
 {
     Node *tmpNode = mainNode->next;
@@ -96,12 +113,21 @@ double Tour::distance()
     return distance;
 }
 
+/*
+ * Inserts a given point into the tour where
+ * the shortest distance to another point has
+ * been determined.
+ *
+ *  * param:   Point p:
+ *                  The point which will be inserted.
+ */
 void Tour::insertNearest(Point p)
 {
     Node *tmpNode = mainNode->next;
 
     if(tmpNode == nullptr){
-        mainNode = new Node(p, mainNode);
+        mainNode = new Node(p, nullptr);
+        mainNode->next = mainNode;
         return;
     }
 
@@ -122,7 +148,40 @@ void Tour::insertNearest(Point p)
     return;
 }
 
+/*
+ * Inserts a given point into the tour where
+ * the shortest TOTAL distance increase has been
+ * determined.
+ *
+ *  * param:   Point p:
+ *                  The point which will be inserted.
+ */
 void Tour::insertSmallest(Point p)
 {
-    // TODO: write this member
+    Node *tmpNode = mainNode->next;
+
+    if(tmpNode == nullptr){
+        mainNode = new Node(p, nullptr);
+        mainNode->next = mainNode;
+        return;
+    }
+
+    double shortestDifference = -1;
+    double difference;
+
+    Node *nearestNode = mainNode;
+    while(tmpNode != mainNode) {
+        difference = (tmpNode->point.distanceTo(p) +
+                      p.distanceTo(tmpNode->next->point)) -
+                tmpNode->point.distanceTo(tmpNode->next->point);
+
+        if(difference < shortestDifference || shortestDifference == -1){
+            nearestNode = tmpNode;
+            shortestDifference = difference;
+        }
+        tmpNode = tmpNode->next;
+    }
+    Node *newNode = new Node(p, nearestNode->next);
+    nearestNode->next = newNode;
+    return;
 }

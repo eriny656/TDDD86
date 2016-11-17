@@ -110,10 +110,10 @@ bool isCorrectGuess(vector<string> &dictionary, string &guess, char input, bool 
  * param:   string word:
  *              the string contining the correctly guessed
  *              characters
- *          string searchString:
+ * param:   string searchString:
  *              the edited string containing the word edited
  *              to contain the input character
- *          char input:
+ * param:   char input:
  *              the character that the user has entered as a
  *              guess
  */
@@ -185,6 +185,7 @@ vector<string> startGame() {
     ifstream dicStream;
 
     string input;
+
     cin >> input;
 
     if(input=="a") {

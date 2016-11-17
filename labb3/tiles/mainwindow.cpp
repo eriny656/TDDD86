@@ -17,7 +17,7 @@ static const int MIN_SIZE = 20;
 static const int MAX_SIZE = 100;
 static const int MIN_COLOR = 50;
 static const int MAX_COLOR = 255;
-static const int TILE_COUNT = 50;
+static const int TILE_COUNT = 10;
 static const bool RANDOM = true;   // set to false for repeatable output
 
 MainWindow::MainWindow(QWidget *parent) :

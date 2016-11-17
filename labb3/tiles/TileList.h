@@ -1,8 +1,13 @@
-// This is the .h file you will edit and turn in.
-// We have provided a skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own, as well as on the members.
-// TODO: remove this comment header
+// TDDD86 TileList
+// This file contains the declaration for the TileList structure
+// See TileList.cpp for implementation of each member
+//
+// Creates an editable list of tiles that are drawn and manipulated
+// by the client
+//
+// Created by
+// Eric Nylander (eriny656)
+// Samuel Blomqvist (sambl126)
 
 #ifndef TILELIST_H
 #define TILELIST_H
@@ -14,7 +19,7 @@
 class TileList {
 public:
     /*
-     * Create new list with capacity 10
+     * Create new list of tiles
     */
     TileList();
     /*
@@ -54,8 +59,10 @@ public:
     void removeAll(int x, int y);
 
 private:
+    // Contains the array of tiles to be edited by the client
     Tile *tileArray;
-    const int size = 10;
+    // Contains the size of the array
+    int size;
 
 };
 

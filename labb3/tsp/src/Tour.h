@@ -1,8 +1,9 @@
-// This is the .h file you will edit and turn in.
-// We have provided a skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own, as well as on the members.
-// TODO: remove this comment header
+// This header file contains the interface
+// for the Tour object.
+//
+// Created by
+// Eric Nylander (eriny656)
+// Samuel Blomqvist (sambl126)
 
 #ifndef TOUR_H
 #define TOUR_H
@@ -33,6 +34,7 @@ public:
     void insertSmallest(Point p);
 
 private:
+    // This is our first node in the Tour object.
     Node *mainNode;
 
 };

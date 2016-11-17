@@ -18,7 +18,7 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    string filename = "tsp10.txt";
+    string filename = "mona-50k.txt";
     ifstream input;
     input.open(filename);
 
@@ -37,23 +37,22 @@ int main(int argc, char *argv[]) {
     view->show();
 
     // run insertion heuristic
-    /*
     Tour tour;
     double x;
     double y;
     while (input >> x >> y) {
         Point p(x, y);
-        tour.insertNearest(p);
+        tour.insertSmallest(p);
         //uncomment the 4 lines below to animate
         //tour.draw(scene);
-        //std::chrono::milliseconds dura(50);
+        //std::chrono::milliseconds dura(10);
         //std::this_thread::sleep_for(dura);
         //a.processEvents();
     }
-    */
     input.close();
 
 
+    /*
     // TESTING
     Point p(100.0, 100.0);
     Point q(500.0, 100.0);
@@ -69,8 +68,7 @@ int main(int argc, char *argv[]) {
     cout << squareTour.distance() << endl;
     squareTour.draw(scene);
     return a.exec(); // start Qt event loop
-
-    /*
+    */
 
     // print tour to standard output
     cout << "Tour distance: " << std::fixed << std::setprecision(4)
@@ -81,5 +79,4 @@ int main(int argc, char *argv[]) {
     // draw tour
     tour.draw(scene);
     return a.exec(); // start Qt event loop
-    */
 }
