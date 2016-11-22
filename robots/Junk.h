@@ -14,6 +14,8 @@ public:
     Junk();
     Junk(Robot c);
 
+    ~Junk();
+
     /*
     * Draws this junk onto the given QGraphicsScene.
     */
@@ -22,6 +24,8 @@ public:
     void moveTowards(const Unit& u);
 
     bool attacks(const Unit& u) const;
+
+    bool isJunk();
 };
 
 #endif // JUNK_H

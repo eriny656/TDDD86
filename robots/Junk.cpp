@@ -9,17 +9,25 @@
 Junk::Junk() : Robot() {}
 Junk::Junk(Robot c) : Robot(c) {}
 
+Junk::~Junk(){}
+
 void Junk::draw(QGraphicsScene *scene) const {
     Point corner = asPoint();
     scene->addEllipse(QRectF(corner.x * UNIT_WIDTH, corner.y * UNIT_HEIGHT,
                              JUNK_RADIUS, JUNK_RADIUS), QPen(), QBrush(JUNK_COLOR));
 }
 
-void Junk::moveTowards(const Unit& u) {
+
+// Fråga om const Unit&
+void Junk::moveTowards(const Unit&) {
 }
 
-bool Junk::attacks(const Unit& u) const{
+bool Junk::attacks(const Unit&) const{
     return false;
+}
+
+bool Junk::isJunk() {
+    return true;
 }
 
 
