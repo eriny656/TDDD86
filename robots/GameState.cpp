@@ -12,52 +12,53 @@ using namespace std;
 GameState::GameState(){}
 
 GameState::GameState(int numberOfRobots) {
-    while(!robots.empty()){
-        delete *robots.end();
-        robots.erase(robots.end());
-    }
-
     for (int i = 0; i < numberOfRobots; i++) {
         robots.push_back(new Robot());
     }
     teleportHero();
 }
 
-
 // TODO: learn about operators and memory leaks.
 GameState::GameState(const GameState &gs){
-    robots = gs.operator.robots;
-    hero = gs.hero;
+    this->operator =(gs);
 }
 
 GameState::~GameState(){
-    while(!robots.empty()){
-        delete *robots.end();
-        robots.erase(robots.end());
+    for(auto i = robots.begin(); i != robots.end(); ++i){
+        delete *i;
     }
-    delete hero;
 }
 
+GameState GameState::operator=(GameState gs) {
+    robots.clear();
 
-GameState::operator=(GameState gs) {
-    return *gs;
+    // Creates copy of old robots in gs and inserts in new gameState
+    for(Robot *r: gs.robots) {
+        this->robots.push_back(new Robot(*r));
+    }
+    this->hero = gs.hero;
+
+    return 0;
 }
 
 void GameState::draw(QGraphicsScene *scene) const {
     scene->clear();
     for (size_t i = 0; i < robots.size(); ++i)
         robots[i]->draw(scene);
-    hero->draw(scene);
+    hero.draw(scene);
 }
 
 void GameState::teleportHero() {
-    do hero->teleport();
-    while (!isEmpty(*hero));
+    do {
+        hero.teleport();
+    }
+    while (!isEmpty(hero));
+
 }
 
 void GameState::moveRobots() {
     for (unsigned int i = 0; i < robots.size(); i++)
-        robots[i]->moveTowards (*hero);
+        robots[i]->moveTowards (hero);
 }
 
 
@@ -75,12 +76,8 @@ int GameState::countCollisions() {
     unsigned int i = 0;
     while (i < robots.size()) {
         bool collision = (countRobotsAt(*robots[i]) > 1);
-        cout << BoolToString(robots[i]->isJunk()) << endl;
-        cout << "Collision: " << BoolToString(collision) << endl;
-        cout << robots.size() << endl;
         if (collision) {
             if (!robots[i]->isJunk()) {
-                cout << "Hello guys" << endl;
                 robots[i] = new Junk(*robots[i]);
                 numberDestroyed++;
             }
@@ -100,7 +97,7 @@ bool GameState::anyRobotsLeft() const {
 }
 
 bool GameState::heroDead() const {
-    return !isEmpty(*hero);
+    return !isEmpty(hero);
 }
 
 bool GameState::isSafe(const Unit& unit) const {
@@ -112,10 +109,10 @@ bool GameState::isSafe(const Unit& unit) const {
 }
 
 void GameState::moveHeroTowards(const Unit& dir) {
-    hero->moveTowards(dir);
+    hero.moveTowards(dir);
 }
 
-Hero GameState::getHero() const {return *hero;}
+Hero GameState::getHero() const {return hero;}
 
 /*
  * Free of robots and junk only
@@ -129,11 +126,9 @@ bool GameState::isEmpty(const Unit& unit) const {
  */
 int GameState::countRobotsAt(const Unit& unit) const {
     int count = 0;
-    cout << "We entered the function ";
     for (size_t i = 0; i < robots.size(); ++i) {
         if (robots[i]->at(unit))
             count++;
     }
-    cout << count << endl;
     return count;
 }

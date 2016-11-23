@@ -10,6 +10,9 @@
 #include "Robot.h"
 #include "Junk.h"
 
+#include <iostream>
+using namespace std;
+
 MainWindow::MainWindow(QWidget *parent) :
     QWidget(parent) {
     // set default size and color

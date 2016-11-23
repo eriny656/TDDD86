@@ -25,6 +25,8 @@ public:
 
     ~GameState();
 
+    GameState operator=(GameState gs);
+
     /*
      * Clear and redraw entire playing field
      */
@@ -74,7 +76,7 @@ public:
 private:
     // Fråga om pekare och direkt sparning och manipulering
     std::vector<Robot*> robots;  // the robots
-    Hero *hero;                  // the hero
+    Hero hero;                  // the hero
 
     // private helpers
     bool isEmpty(const Unit& unit) const;
