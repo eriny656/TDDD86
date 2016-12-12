@@ -11,9 +11,13 @@
 
 class Junk : public Robot {
 public:
+    /* General constructor */
     Junk();
+
+    /* Construct Junk at point of parameter Robot */
     Junk(Robot c);
 
+    /* Destructor */
     ~Junk();
 
     /*
@@ -21,10 +25,13 @@ public:
     */
     void draw(QGraphicsScene* scene) const;
 
+    /* Overrides Robot move function to idle at position */
     void moveTowards(const Unit& u);
 
+    /* Overrides Robot attacks function to idle */
     bool attacks(const Unit& u) const;
 
+    /* Overrides Robot isJunk to return True */
     bool isJunk();
 };
 

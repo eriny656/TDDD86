@@ -14,10 +14,16 @@
  */
 class Unit {
 public:
+    /* Initiates Unit at random position */
     Unit();
+
+    /* Initiates Unit at position of parameter Unit */
     Unit(const Unit& u);
+
+    /* Initiates Unit at position of parameter Point */
     Unit(const Point& p);
 
+    /* Unit destructor */
     virtual ~Unit();
 
     /*

@@ -11,10 +11,19 @@
 
 class Robot : public Unit {
 public:
+    /* General constructor inherited from Unit */
     Robot();
+
+    /* Constructor at point of parameter Unit */
     Robot(Unit c);
+
+    /* Destructor */
     virtual ~Robot();
+
+    /* Draws Robot to scene */
     void draw(QGraphicsScene* scene) const;
+
+    /* Shows if unit is subclass Junk; returns False if not overriden*/
     virtual bool isJunk();
 };
 

@@ -6,7 +6,6 @@
 #include "Unit.h"
 #include "constants.h"
 #include "utilities.h"
-#include <iostream>
 #include <cstdlib>
 #include <cmath>
 
@@ -50,7 +49,6 @@ void Unit::moveTowards(const Unit& u) {
 }
 
 void Unit::teleport() {
-    cout << "set unit values" << endl;
     x = rand_int (MIN_X, MAX_X);
     y = rand_int (MIN_Y, MAX_Y);
 }

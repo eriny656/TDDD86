@@ -3,11 +3,9 @@
  * Ported to Qt and adapted for TDDD86, 2015.
  */
 
-#include<iostream>
 #include "GameState.h"
 #include "utilities.h"
 #include "constants.h"
-using namespace std;
 
 GameState::GameState(){}
 
@@ -18,7 +16,6 @@ GameState::GameState(int numberOfRobots) {
     teleportHero();
 }
 
-// TODO: learn about operators and memory leaks.
 GameState::GameState(const GameState &gs){
     this->operator =(gs);
 }
@@ -32,9 +29,9 @@ GameState::~GameState(){
 GameState GameState::operator=(GameState gs) {
     robots.clear();
 
-    // Creates copy of old robots in gs and inserts in new gameState
+    // Creates copy of old robots in gs and inserts in new GameState
     for(Robot *r: gs.robots) {
-        this->robots.push_back(new Robot(*r));
+        this->robots.push_back(new Robot(r->asPoint()));
     }
     this->hero = gs.hero;
 
@@ -61,28 +58,18 @@ void GameState::moveRobots() {
         robots[i]->moveTowards (hero);
 }
 
-
-
-
-inline const char * const BoolToString(bool b)
-{
-  return b ? "true" : "false";
-}
-
-
-
 int GameState::countCollisions() {
     int numberDestroyed = 0;
-    unsigned int i = 0;
-    while (i < robots.size()) {
+
+    for (unsigned i = 0; i < robots.size(); ++i){
         bool collision = (countRobotsAt(*robots[i]) > 1);
-        if (collision) {
-            if (!robots[i]->isJunk()) {
-                robots[i] = new Junk(*robots[i]);
-                numberDestroyed++;
-            }
+
+        // Will only create junk and give points when
+        // there is a collision with a non-junk robot
+        if (collision && !robots[i]->isJunk()) {
+            robots[i] = new Junk(*robots[i]);
+            numberDestroyed++;
         }
-        i++;
     }
     return numberDestroyed;
 }

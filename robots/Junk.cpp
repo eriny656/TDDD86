@@ -17,8 +17,6 @@ void Junk::draw(QGraphicsScene *scene) const {
                              JUNK_RADIUS, JUNK_RADIUS), QPen(), QBrush(JUNK_COLOR));
 }
 
-
-// Fråga om const Unit&
 void Junk::moveTowards(const Unit&) {
 }
 
