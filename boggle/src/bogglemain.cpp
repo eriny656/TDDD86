@@ -26,11 +26,22 @@ using namespace std;
 int main() {
     intro();
 
+    Boggle *boggle;
+
     // play games repeatedly until user decides to quit
-    Boggle boggle;
+
     while (true) {
+        bool randBoard = yesOrNo("Do you want to generate a random board? ");
+        if(!randBoard){
+            generateUserBoard(boggle);
+        }
+        else{
+            boggle = new Boggle();
+        }
+
         playOneGame(boggle);
         cout << endl;
+        delete boggle;
         if (!yesOrNo("Play again (Y/N)? ")) {
             break;
         }
@@ -38,6 +49,25 @@ int main() {
 
     cout << "Have a nice day." << endl;
     return 0;
+}
+
+
+// TODO: Fix this. It doesn't work.
+void generateUserBoard(Boggle* boggle){
+    string boardString;
+    cout << endl <<  "Please enter the string of characters you wish to use as your board:" << endl;
+    cin >> boardString;
+
+    // Converts the characters in the string to uppercase
+    int i = 0;
+    char c;
+    while(boardString[i]){
+        c = boardString[i];
+        putchar(toupper(c));
+        ++i;
+    }
+
+    boggle = new Boggle(boardString);
 }
 
 /*

@@ -16,8 +16,6 @@ using namespace std;
 
 static const int NUM_CUBES = 16;   // the number of cubes in the game
 static const int CUBE_SIDES = 6;   // the number of sides on each cube
-static const int NUM_ROWS = 4;
-static const int NUM_COLS = 4;
 static string CUBES[NUM_CUBES] = {        // the letters on all 6 sides of every cube
    "AAEEGN", "ABBJOO", "ACHOPS", "AFFKPS",
    "AOOTTW", "CIMOTU", "DEILRX", "DELRVY",
@@ -26,32 +24,33 @@ static string CUBES[NUM_CUBES] = {        // the letters on all 6 sides of every
 };
 
 Boggle::Boggle(){
-    board.resize(NUM_ROWS, NUM_COLS);
+    board.resize(BOARD_SIZE, BOARD_SIZE);
     string boardString;
     string cubeString;
-    int letterPosition;
+    int charPosition;
 
+    // Builds the string of random characters to be inserted in the grid
     for(int i = 0; i < NUM_CUBES; ++i){
         cubeString = CUBES[i];
-        letterPosition = randomInteger(0, CUBE_SIDES-1);
-        cout << "finding letter position" << endl;
-        cubeString = cubeString.at(letterPosition);
+        charPosition = randomInteger(0, CUBE_SIDES-1);
+        cubeString = cubeString.at(charPosition);
         boardString.append(cubeString);
     }
-    cout << "building board" << endl;
 
     buildBoard(boardString);
-
     shuffle(board);
-
-    cout << board.toString();
 }
 
 Boggle::Boggle(string userBoard){
-    board.resize(NUM_ROWS, NUM_COLS);
+    board.resize(BOARD_SIZE, BOARD_SIZE);
 
     buildBoard(userBoard);
     shuffle(board);
+}
+
+Boggle &Boggle::operator=(const Boggle &boggle){
+    this->board = boggle.board;
+    return *this;
 }
 
 Grid<string> Boggle::getBoard() const{
@@ -65,8 +64,8 @@ void Boggle::buildBoard(string &boardString){
 
     for(int i = 0; i < NUM_CUBES; ++i){
         letter = boardString.at(i);
-        ypos = floor(i/NUM_COLS);
-        xpos = i - (NUM_COLS*ypos);
+        ypos = floor(i/BOARD_SIZE);
+        xpos = i - (BOARD_SIZE*ypos);
 
         board.set(ypos, xpos, letter);
     }

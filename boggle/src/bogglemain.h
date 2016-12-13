@@ -14,8 +14,11 @@
 using namespace std;
 
 void intro();
-void playOneGame(Boggle& boggle);
+void playOneGame(Boggle *boggle);
 bool yesOrNo(string prompt);
 void clearConsole();
+
+void generateUserBoard(Boggle*);
+void printBoard(Boggle*);
 
 #endif

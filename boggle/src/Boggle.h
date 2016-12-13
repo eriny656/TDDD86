@@ -30,6 +30,8 @@ public:
 
     Grid<string> getBoard() const;
 
+    Boggle &operator=(const Boggle&);
+
     // TODO: decide the public member functions and declare them
 
 private:
