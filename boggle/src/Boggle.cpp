@@ -45,8 +45,9 @@ Boggle::Boggle(string userBoard){
     board.resize(BOARD_SIZE, BOARD_SIZE);
 
     buildBoard(userBoard);
-    shuffle(board);
 }
+
+Boggle::~Boggle(){}
 
 Boggle &Boggle::operator=(const Boggle &boggle){
     this->board = boggle.board;
@@ -55,6 +56,10 @@ Boggle &Boggle::operator=(const Boggle &boggle){
 
 Grid<string> Boggle::getBoard() const{
     return board;
+}
+
+int Boggle::getBoardArea(){
+    return (BOARD_SIZE * BOARD_SIZE);
 }
 
 void Boggle::buildBoard(string &boardString){

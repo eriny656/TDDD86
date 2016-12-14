@@ -31,17 +31,17 @@ int main() {
     // play games repeatedly until user decides to quit
 
     while (true) {
+        boggle = new Boggle();
+        int area = boggle->getBoardArea();
         bool randBoard = yesOrNo("Do you want to generate a random board? ");
         if(!randBoard){
-            generateUserBoard(boggle);
-        }
-        else{
-            boggle = new Boggle();
+            delete boggle;
+            boggle = generateUserBoard(area);
         }
 
         playOneGame(boggle);
-        cout << endl;
         delete boggle;
+        cout << endl;
         if (!yesOrNo("Play again (Y/N)? ")) {
             break;
         }
@@ -52,22 +52,33 @@ int main() {
 }
 
 
-// TODO: Fix this. It doesn't work.
-void generateUserBoard(Boggle* boggle){
+/*
+ * Permits the user to create a custom board to play on
+ */
+Boggle *generateUserBoard(int area){
+    const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     string boardString;
-    cout << endl <<  "Please enter the string of characters you wish to use as your board:" << endl;
+    cout << endl <<  "Please enter the string of " << area << endl;
+    cout << "characters you wish to use as your board" << endl;
     cin >> boardString;
+    boardString = trim(toUpperCase(boardString));
 
-    // Converts the characters in the string to uppercase
-    int i = 0;
-    char c;
-    while(boardString[i]){
-        c = boardString[i];
-        putchar(toupper(c));
-        ++i;
+checkLength:
+    if(boardString.length() != area){
+        cout << "Please enter a string of length " << area << " characters!" << endl;
+        cin >> boardString;
+        goto checkLength;
+    }
+    for(char character: boardString){
+        int charPos = ALPHABET.find(character, 0);
+        if(charPos==string::npos){
+            cout << "Please enter a string of characters in the english alphabet!" << endl;
+            cin >> boardString;
+            goto checkLength;
+        }
     }
 
-    boggle = new Boggle(boardString);
+    return new Boggle(boardString);
 }
 
 /*

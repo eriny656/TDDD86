@@ -18,7 +18,7 @@ void playOneGame(Boggle *boggle);
 bool yesOrNo(string prompt);
 void clearConsole();
 
-void generateUserBoard(Boggle*);
+Boggle* generateUserBoard(int);
 void printBoard(Boggle*);
 
 #endif

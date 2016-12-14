@@ -16,23 +16,64 @@
  * Plays one game of Boggle using the given boggle game state object.
  */
 void playOneGame(Boggle* boggle) {
-    clearConsole();
-    printBoard(boggle);
+    vector<string> userWords;
+    string newWord;
+    int score;
+
+    while(true){
+        clearConsole();
+        cout << "It's your turn!" << endl;
+        printBoard(boggle);
+        showUserWords(userWords);
+        cout << score << endl;
+
+        while(true){
+            cout << "Type a word (or press ENTER to end your turn): ";
+            cin >> newWord;
+            if(newWord.length() < boggle->MIN_WORD_LENGTH){
+                cout << "Words that you enter must be at least " << boggle->MIN_WORD_LENGTH << " characters long." << endl;
+                cout << "Please try again!" << endl;
+                continue;
+            }
+
+            newWord = trim(toUpperCase(newWord));
+            cout << endl;
+
+            for(string word: userWords){
+                if(word == newWord){
+                    cout << "You've already entered that word before!" << endl;
+                    cout << "Please enter a new word or end your turn!" << endl;
+                    continue;
+                }
+            }
+
+            if(isValidWord(newWord)){
+                userWords.push_back(newWord);
+                score += 1;
+                cout << "You found a new word!" << endl;
+                break;
+            }
+            else{
+                cout << "That was not a valid english word! Try again!" << endl;
+            }
+        }
+
+    }
 
     // TODO: implement this function (and add any other functions you like to help you)
 
 }
+
 /*
  * Prints the board that the player is using
  */
 void printBoard(Boggle* boggle){
     Grid<string> board = boggle->getBoard();
     string printedBoard;
-
     int ypos;
     int xpos;
 
-    for(unsigned i=0; i<pow(boggle->BOARD_SIZE, 2); ++i){
+    for(unsigned i=0; i<boggle->getBoardArea(); ++i){
         if(i%boggle->BOARD_SIZE == 0){
             printedBoard.append("\n");
         }

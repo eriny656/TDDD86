@@ -24,11 +24,15 @@ public:
 
     Boggle(string);
 
+    ~Boggle();
+
     void buildBoard(string&);
 
     void shuffleBoard();
 
     Grid<string> getBoard() const;
+
+    int getBoardArea();
 
     Boggle &operator=(const Boggle&);
 
