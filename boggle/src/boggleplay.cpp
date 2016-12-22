@@ -18,50 +18,85 @@
 void playOneGame(Boggle* boggle) {
     vector<string> userWords;
     string newWord;
-    int score;
+    int score = 0;
+	bool skip;
+	clearConsole();
 
-    while(true){
-        clearConsole();
-        cout << "It's your turn!" << endl;
-        printBoard(boggle);
-        showUserWords(userWords);
-        cout << score << endl;
+	while (true) {
+		skip = false;
+		// Printing the info on user's turn.
+		cout << "It's your turn!" << endl;
+		printBoard(boggle);
+		cout << "Your words (" << userWords.size() << "): " << showUserWords(userWords) << endl;
+		cout << endl << "Your score: " << score << endl;
 
-        while(true){
-            cout << "Type a word (or press ENTER to end your turn): ";
-            cin >> newWord;
-            if(newWord.length() < boggle->MIN_WORD_LENGTH){
-                cout << "Words that you enter must be at least " << boggle->MIN_WORD_LENGTH << " characters long." << endl;
-                cout << "Please try again!" << endl;
-                continue;
-            }
+		cout << "Type a word (or press ENTER to end your turn): ";
+		getline(cin, newWord);
+		if (newWord == "") break;
+		else if (newWord.length() < boggle->MIN_WORD_LENGTH) {
+			clearConsole();
+			cout << "Words that you enter must be at least " << boggle->MIN_WORD_LENGTH << " characters long." << endl;
+			cout << "Please try again!" << endl;
+			continue;
+		}
 
-            newWord = trim(toUpperCase(newWord));
-            cout << endl;
+		newWord = trim(toUpperCase(newWord));
+		cout << endl;
 
-            for(string word: userWords){
-                if(word == newWord){
-                    cout << "You've already entered that word before!" << endl;
-                    cout << "Please enter a new word or end your turn!" << endl;
-                    continue;
-                }
-            }
+		for (string word : userWords) {
+			cout << endl << word << " + " << newWord << endl;
+			if (word == newWord) {
+				clearConsole();
+				cout << "You've already entered that word before!" << endl;
+				cout << "Please enter a new word or end your turn!" << endl;
+				skip = true;
+				break;
+			}
+		}
+		if (skip) continue;
 
-            if(isValidWord(newWord)){
-                userWords.push_back(newWord);
-                score += 1;
-                cout << "You found a new word!" << endl;
-                break;
-            }
-            else{
-                cout << "That was not a valid english word! Try again!" << endl;
-            }
-        }
+		if (isValidWord(newWord)) {
+			clearConsole();
+			userWords.push_back(newWord);
+			score += 1;
+			cout << "You found a new word!" << endl;
+			continue;
+		}
+		else {
+			cout << "That was not a valid english word! Try again!" << endl;
+		}
+	}
+		
+	// Now it is the computer player's turn.
+	// Implement that here.
 
-    }
+}
 
     // TODO: implement this function (and add any other functions you like to help you)
 
+
+/*
+ * Determines whether or not the entered word is in the english dictionary
+*/
+bool isValidWord(string& word) {
+	// DEBUG
+	// TODO: implement the binary search function to do this
+	return true;
+}
+
+/*
+ * Creates a string representation of the words that the user already
+ * has entered.
+ */
+string showUserWords(vector<string>& userWords) {
+	string wordString = "{";
+	for (string word : userWords) {
+		wordString.append(word);
+		wordString.append(" ");
+	}
+	wordString.append("}");
+
+	return wordString;
 }
 
 /*

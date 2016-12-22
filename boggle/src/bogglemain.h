@@ -21,4 +21,7 @@ void clearConsole();
 Boggle* generateUserBoard(int);
 void printBoard(Boggle*);
 
+string showUserWords(vector<string>&);
+bool isValidWord(string&);
+
 #endif
