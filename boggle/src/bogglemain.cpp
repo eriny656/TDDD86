@@ -18,7 +18,6 @@
 #include <string>
 #include "random.h"
 #include "strlib.h"
-#include "Boggle.h"
 #include "bogglemain.h"
 
 using namespace std;
@@ -55,7 +54,7 @@ int main() {
 /*
  * Permits the user to create a custom board to play on
  */
-Boggle *generateUserBoard(int area){
+Boggle *generateUserBoard(unsigned area){
     const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
     string boardString;
     cout << endl <<  "Please enter the string of " << area << endl;

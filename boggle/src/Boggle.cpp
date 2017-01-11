@@ -58,7 +58,7 @@ Grid<string> Boggle::getBoard() const{
     return board;
 }
 
-int Boggle::getBoardArea(){
+unsigned Boggle::getBoardArea(){
     return (BOARD_SIZE * BOARD_SIZE);
 }
 

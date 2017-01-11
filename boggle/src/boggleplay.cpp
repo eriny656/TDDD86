@@ -7,9 +7,9 @@
 #include <iomanip>
 #include <sstream>
 #include <math.h>
-#include "Boggle.h"
 #include "bogglemain.h"
 #include "strlib.h"
+#include <utility>
 // TODO: include any other header files you need
 
 /*
@@ -19,45 +19,40 @@ void playOneGame(Boggle* boggle) {
     vector<string> userWords;
     string newWord;
     int score = 0;
-	bool skip;
 	clearConsole();
 
-	while (true) {
-		skip = false;
+    while (true) {
 		// Printing the info on user's turn.
 		cout << "It's your turn!" << endl;
 		printBoard(boggle);
-		cout << "Your words (" << userWords.size() << "): " << showUserWords(userWords) << endl;
+        if(userWords.size() > 0){
+            cout << "Your words (" << userWords.size() << "): " << showUserWords(userWords) << endl;
+        }
 		cout << endl << "Your score: " << score << endl;
 
 		cout << "Type a word (or press ENTER to end your turn): ";
 		getline(cin, newWord);
 		if (newWord == "") break;
-		else if (newWord.length() < boggle->MIN_WORD_LENGTH) {
+
+        newWord = trim(toLowerCase(newWord));
+        cout << endl;
+
+        // If the word is not valid length, loop again
+        if(isWordShort(newWord, boggle->MIN_WORD_LENGTH)) continue;
+
+        // if the word already has been found, loop again
+        if(isWordInList(newWord, userWords)) continue;
+
+        if(!isWordInBoard(trim(toUpperCase(newWord)), boggle->getBoard())){
+            // clearConsole();
+            cout << "That word is not in the board" << endl << endl;
+            continue;
+        }
+
+        // if the word is not in the dictionary, loop again
+        if (isDictionaryWord(newWord)) {
 			clearConsole();
-			cout << "Words that you enter must be at least " << boggle->MIN_WORD_LENGTH << " characters long." << endl;
-			cout << "Please try again!" << endl;
-			continue;
-		}
-
-		newWord = trim(toUpperCase(newWord));
-		cout << endl;
-
-		for (string word : userWords) {
-			cout << endl << word << " + " << newWord << endl;
-			if (word == newWord) {
-				clearConsole();
-				cout << "You've already entered that word before!" << endl;
-				cout << "Please enter a new word or end your turn!" << endl;
-				skip = true;
-				break;
-			}
-		}
-		if (skip) continue;
-
-		if (isValidWord(newWord)) {
-			clearConsole();
-			userWords.push_back(newWord);
+            userWords.push_back(trim(toUpperCase(newWord)));
 			score += 1;
 			cout << "You found a new word!" << endl;
 			continue;
@@ -72,16 +67,104 @@ void playOneGame(Boggle* boggle) {
 
 }
 
-    // TODO: implement this function (and add any other functions you like to help you)
+bool isWordInBoard(string newWord, const Grid<string> grid){
+    int row = 0;
+    int col = 0;
+    vector<pair<int, int>> searchedPositions;
+    while(grid.inBounds(row,col)){
+        while(grid.inBounds(row,col)){
+            char compChar = *grid.get(row,col).c_str();
+            cout << compChar << " " << newWord << endl;
+            if(newWord.at(0) == compChar){
+                cout << "FIRST LETTER" << endl;
+                if(findCompleteWord(newWord, grid, row, col, searchedPositions)){
+                    return true;
+                }
+            }
+            ++col;
+        }
+        col = 0;
+        ++row;
+    }
+    return false;
+}
+
+bool findCompleteWord(string word, const Grid<string> grid, int row, int col, vector<pair<int, int>> &searchedPositions){
+    searchedPositions.push_back(make_pair(row, col));
+    word.erase(word.begin());
+    cout << word << endl;
+    if(word.length() == 0){
+        return true;
+    }
+    for(int currentRow = row-1; currentRow < row+2; ++currentRow){
+        if(!grid.inBounds(currentRow, 0)) continue;
+        for(int currentCol = col-1; currentCol < col+2; ++currentCol){
+            if(!grid.inBounds(0, currentCol)) continue;
+            if(alreadySearched(currentRow, currentCol, searchedPositions)) {
+                cout << grid.get(currentRow, currentCol) << " " << "alreadySearched!" << endl;
+                continue;
+            }
+            if(word.at(0) == *grid.get(currentRow, currentCol).c_str() && findCompleteWord(word, grid, currentRow, currentCol, searchedPositions)) {
+                cout << "YEE B0I!!" << endl;
+                return true;
+            }
+        }
+    }
+    searchedPositions.pop_back();
+    return false;
+}
+
+bool alreadySearched(int &y , int &x, vector<pair<int, int>> &sp){
+    for(pair<int, int> position: sp){
+        if(y == position.first && x == position.second) {
+            return true;
+        }
+    }
+    return false;
+}
 
 
 /*
  * Determines whether or not the entered word is in the english dictionary
 */
-bool isValidWord(string& word) {
-	// DEBUG
-	// TODO: implement the binary search function to do this
-	return true;
+bool isDictionaryWord(string word) {
+    // TODO: implement the binary search function to do this
+    for (string dicWord: lexicon){
+        if(word == dicWord) return true;
+    }
+
+    return false;
+}
+
+
+/*
+ * Returns true if newWord is shorter than minLength
+ */
+bool isWordShort(string &newWord, const unsigned minLength){
+    if (newWord.length() < minLength){
+        clearConsole();
+        cout << "Words that you enter must be at least " << minLength << " characters long." << endl;
+        cout << "Please try again!" << endl;
+        return true;
+    }
+    return false;
+}
+
+/*
+ * Returns true if newWord exists in userWords
+ */
+bool isWordInList(string &newWord, vector<string> &userWords){
+    string uppercaseWord = trim(toUpperCase(newWord));
+    for (string word : userWords) {
+        cout << endl << word << " + " << newWord << endl;
+        if (word == uppercaseWord) {
+            clearConsole();
+            cout << "You've already entered that word before!" << endl;
+            cout << "Please enter a new word or end your turn!" << endl << endl;
+            return true;
+        }
+    }
+    return false;
 }
 
 /*
@@ -90,9 +173,10 @@ bool isValidWord(string& word) {
  */
 string showUserWords(vector<string>& userWords) {
 	string wordString = "{";
-	for (string word : userWords) {
-		wordString.append(word);
-		wordString.append(" ");
+    wordString.append(userWords.at(0));
+    for (unsigned i = 1; i < userWords.size(); ++i) {
+        wordString.append(", ");
+        wordString.append(userWords.at(i));
 	}
 	wordString.append("}");
 

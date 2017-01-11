@@ -32,7 +32,7 @@ public:
 
     Grid<string> getBoard() const;
 
-    int getBoardArea();
+    unsigned getBoardArea();
 
     Boggle &operator=(const Boggle&);
 
