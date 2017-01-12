@@ -19,14 +19,14 @@ void playOneGame(Boggle* boggle) {
     vector<string> userWords;
     string newWord;
     int score = 0;
-	clearConsole();
+    clearConsole();
 
     while (true) {
 		// Printing the info on user's turn.
 		cout << "It's your turn!" << endl;
 		printBoard(boggle);
         if(userWords.size() > 0){
-            cout << "Your words (" << userWords.size() << "): " << showUserWords(userWords) << endl;
+            cout << "Your words (" << userWords.size() << "): " << showWords(userWords) << endl;
         }
 		cout << endl << "Your score: " << score << endl;
 
@@ -44,17 +44,17 @@ void playOneGame(Boggle* boggle) {
         if(isWordInList(newWord, userWords)) continue;
 
         if(!isWordInBoard(trim(toUpperCase(newWord)), boggle->getBoard())){
-            // clearConsole();
+            clearConsole();
             cout << "That word is not in the board" << endl << endl;
             continue;
         }
 
         // if the word is not in the dictionary, loop again
-        if (isDictionaryWord(newWord)) {
-			clearConsole();
+        if (lexicon.contains(newWord)) {
+            // clearConsole();
             userWords.push_back(trim(toUpperCase(newWord)));
 			score += 1;
-			cout << "You found a new word!" << endl;
+            cout << "You found a new word: " << newWord << endl;
 			continue;
 		}
 		else {
@@ -64,6 +64,17 @@ void playOneGame(Boggle* boggle) {
 		
 	// Now it is the computer player's turn.
 	// Implement that here.
+    cout << endl << "It's my turn!" << endl;
+    vector<string> botWords = botPlay(boggle);
+    cout << "My words (" << botWords.size() << "): ";
+    cout << showWords(botWords) << endl;
+    cout << "My score: " << botWords.size() << endl;
+    if(botWords.size() > score){
+        cout << "BOTWIN" << endl;
+    }
+    else{
+        cout << "HUMNWIN!" << endl;
+    }
 
 }
 
@@ -123,6 +134,65 @@ bool alreadySearched(int &y , int &x, vector<pair<int, int>> &sp){
     return false;
 }
 
+vector<string> botPlay(Boggle *boggle) {
+    Grid<string> grid = boggle->getBoard();
+    vector<string> foundWords;
+    Lexicon botLexicon("EnglishWords.dat");
+
+    int row = 0;
+    int col = 0;
+    vector<pair<int, int>> searchedPositions;
+    while(grid.inBounds(row,col)){
+        while(grid.inBounds(row,col)){
+            string prefix = grid.get(row,col).c_str();
+            botFindCompleteWord(prefix, boggle, row, col, searchedPositions, foundWords, botLexicon);
+            ++col;
+        }
+        col = 0;
+        ++row;
+    }
+    return foundWords;
+}
+
+void botFindCompleteWord(string prefix, Boggle *boggle, int row, int col, vector<pair<int, int>> &searchedPositions, vector<string> &foundWords, Lexicon botLexicon){
+    //word.erase(word.begin());
+    //cout << word << endl;
+    //if(word.length() == 0){
+    //    return true;
+    //}
+    if(!botLexicon.containsPrefix(prefix)) {
+        return;
+    }
+    searchedPositions.push_back(make_pair(row, col));
+
+    for(int currentRow = row-1; currentRow < row+2; ++currentRow){
+        if(!boggle->getBoard().inBounds(currentRow, 0)) continue;
+        for(int currentCol = col-1; currentCol < col+2; ++currentCol){
+            if(!boggle->getBoard().inBounds(0, currentCol)) continue;
+            if(alreadySearched(currentRow, currentCol, searchedPositions)) {
+                cout << boggle->getBoard().get(currentRow, currentCol) << " " << "alreadySearched!" << endl;
+                continue;
+            }
+            string tempPrefix = prefix;
+            tempPrefix.append(boggle->getBoard().get(currentRow, currentCol));
+
+            if(!isWordShort(tempPrefix, boggle->MIN_WORD_LENGTH) && botLexicon.contains(tempPrefix)){
+                if(!isWordInList(tempPrefix, foundWords)) {
+                    foundWords.push_back(tempPrefix);
+                }
+            }
+            botFindCompleteWord(tempPrefix, boggle, currentRow, currentCol, searchedPositions, foundWords, botLexicon);
+        }
+    }
+    searchedPositions.pop_back();
+    return;
+}
+
+
+
+
+
+
 
 /*
  * Determines whether or not the entered word is in the english dictionary
@@ -171,12 +241,12 @@ bool isWordInList(string &newWord, vector<string> &userWords){
  * Creates a string representation of the words that the user already
  * has entered.
  */
-string showUserWords(vector<string>& userWords) {
+string showWords(vector<string>& words) {
 	string wordString = "{";
-    wordString.append(userWords.at(0));
-    for (unsigned i = 1; i < userWords.size(); ++i) {
+    wordString.append(words.at(0));
+    for (unsigned i = 1; i < words.size(); ++i) {
         wordString.append(", ");
-        wordString.append(userWords.at(i));
+        wordString.append(words.at(i));
 	}
 	wordString.append("}");
 

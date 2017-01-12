@@ -11,6 +11,7 @@
 
 #include "Boggle.h"
 #include "lexicon.h"
+#include <vector>
 #include <string>
 using namespace std;
 
@@ -24,7 +25,7 @@ void clearConsole();
 Boggle* generateUserBoard(unsigned);
 void printBoard(Boggle*);
 
-string showUserWords(vector<string>&);
+string showWords(vector<string>&);
 bool isDictionaryWord(string);
 bool isWordShort(string&, const unsigned);
 bool isWordInList(string&, vector<string>&);
@@ -32,5 +33,8 @@ bool isWordInList(string&, vector<string>&);
 bool isWordInBoard(string, const Grid<string>);
 bool findCompleteWord(string, const Grid<string>, int, int, vector<pair<int, int>>&);
 bool alreadySearched(int&, int&, vector<pair<int, int>>&);
+
+vector<string> botPlay(Boggle*);
+void botFindCompleteWord(string, Boggle*, int, int, vector<pair<int, int>>&, vector<string>&, Lexicon);
 
 #endif
