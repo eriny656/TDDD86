@@ -40,45 +40,22 @@ bool inMap(int& i, map<int, int>& m){
     return false;
 }
 
-
-HuffmanNode* createSubTree(HuffmanNode* oldTop, queue<HuffmanNode> q) {
-    if(q.empty()) {
-        return nullptr;
-    }
-    HuffmanNode left = q.front();
-    q.pop();
-    HuffmanNode* leftPointer = &left;
-    if(q.empty()) {
-        return new HuffmanNode(NOT_A_CHAR, oldTop->count + left.count, leftPointer, oldTop);
-    }
-    HuffmanNode right = q.front();
-    q.pop();
-    HuffmanNode* rightPointer = &right;
-    HuffmanNode* mid = new HuffmanNode(NOT_A_CHAR, left.count + right.count, leftPointer, rightPointer);
-    HuffmanNode* newCoolNode = new HuffmanNode(NOT_A_CHAR, mid->count + oldTop->count, mid, oldTop);
-    return createSubTree(newCoolNode, q);
-}
-
-
 HuffmanNode* buildEncodingTree(const map<int, int> &freqTable) {
-    map<int, int> tempTable = freqTable;
-
-    queue<HuffmanNode> huffQueue;
-    pair<int, int> tmpPair = *(tempTable.begin());
-    int lowestKey = tmpPair.first;
-    tempTable.erase(tempTable.end());
-    while(huffQueue.size() < tempTable.size()) {
-        for(pair<int, int> p : tempTable) {
-            if (p.first < lowestKey) {
-                lowestKey = p.first;
-            }
-        }
-        huffQueue.push(*(new HuffmanNode(lowestKey, (*(tempTable.find(lowestKey))).second, nullptr, nullptr)));
-        tempTable.erase(tempTable.find(lowestKey));
+   priority_queue<HuffmanNode> huffQueue;
+    for(pair<int, int> pr : freqTable) {
+        huffQueue.push(HuffmanNode(pr.first, pr.second, nullptr, nullptr));
     }
-    return createSubTree(new HuffmanNode(PSEUDO_EOF, 1, nullptr, nullptr), huffQueue);
-}
 
+    while(huffQueue.size() > 1) {
+        HuffmanNode* node1 = new HuffmanNode(huffQueue.top().character, huffQueue.top().count, huffQueue.top().zero, huffQueue.top().one);
+        huffQueue.pop();
+        HuffmanNode* node2 = new HuffmanNode(huffQueue.top().character, huffQueue.top().count, huffQueue.top().zero, huffQueue.top().one);
+        huffQueue.pop();
+        huffQueue.push(HuffmanNode(NOT_A_CHAR, (node1->count + node2->count), node1, node2));
+    }
+
+    return new HuffmanNode(huffQueue.top().character, huffQueue.top().count, huffQueue.top().zero, huffQueue.top().one);
+}
 
 map<int, string> buildEncodingMap(HuffmanNode* encodingTree) {
     // TODO: implement this function
