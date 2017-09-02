@@ -20,6 +20,18 @@ Tour::Tour()
     mainNode = new Node(Point(0,0), nullptr);
 }
 
+Tour::Tour(Point a, Point b, Point c, Point d)
+{
+    Node* nodeA = new Node(a);
+    Node* nodeB = new Node(b, nodeA);
+    nodeA->next = nodeB;
+    Node* nodeC = new Node(c, nodeA);
+    nodeB->next = nodeC;
+    Node* nodeD = new Node(d, nodeA);
+    nodeC->next = nodeD;
+    mainNode = nodeA;
+}
+
 /*
  * The Tour destructor
  */

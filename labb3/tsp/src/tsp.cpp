@@ -18,7 +18,7 @@
 int main(int argc, char *argv[]) {
     QApplication a(argc, argv);
 
-    string filename = "mona-50k.txt";
+    string filename = "tsp10.txt";
     ifstream input;
     input.open(filename);
 
@@ -42,7 +42,7 @@ int main(int argc, char *argv[]) {
     double y;
     while (input >> x >> y) {
         Point p(x, y);
-        tour.insertSmallest(p);
+        tour.insertNearest(p);
         //uncomment the 4 lines below to animate
         //tour.draw(scene);
         //std::chrono::milliseconds dura(10);
@@ -50,7 +50,6 @@ int main(int argc, char *argv[]) {
         //a.processEvents();
     }
     input.close();
-
 
     /*
     // TESTING
@@ -62,10 +61,12 @@ int main(int argc, char *argv[]) {
     squareTour.show();
     cout << squareTour.size()<< endl;
     cout << squareTour.distance() << endl;
+
     Point y(200.0, 200.0);
     squareTour.insertNearest(y);
     squareTour.show();
     cout << squareTour.distance() << endl;
+
     squareTour.draw(scene);
     return a.exec(); // start Qt event loop
     */
@@ -79,4 +80,5 @@ int main(int argc, char *argv[]) {
     // draw tour
     tour.draw(scene);
     return a.exec(); // start Qt event loop
+
 }

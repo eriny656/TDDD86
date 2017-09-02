@@ -208,7 +208,8 @@ bool Lexicon::containsPrefix(string prefix) const {
    if (prefix.empty()) return true;
    toLowerCaseInPlace(prefix);
    if (traceToLastEdge(prefix)) return true;
-   foreach (string word in otherWords) {
+   foreach (string word in otherWords)
+   {
       if (startsWith(word, prefix)) return true;
       if (prefix < word) return false;
    }

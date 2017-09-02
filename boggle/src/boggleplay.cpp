@@ -38,10 +38,20 @@ void playOneGame(Boggle* boggle) {
         cout << endl;
 
         // If the word is not valid length, loop again
-        if(isWordShort(newWord, boggle->MIN_WORD_LENGTH)) continue;
+        if(isWordShort(newWord, boggle->MIN_WORD_LENGTH)) {
+            clearConsole();
+            cout << "Words that you enter must be at least " << boggle->MIN_WORD_LENGTH << " characters long." << endl;
+            cout << "Please try again!" << endl;
+            continue;
+        }
 
         // if the word already has been found, loop again
-        if(isWordInList(newWord, userWords)) continue;
+        if(isWordInList(newWord, userWords)) {
+            clearConsole();
+            cout << "You've already entered that word before!" << endl;
+            cout << "Please enter a new word or end your turn!" << endl << endl;
+            continue;
+        }
 
         if(!isWordInBoard(trim(toUpperCase(newWord)), boggle->getBoard())){
             clearConsole();
@@ -55,7 +65,6 @@ void playOneGame(Boggle* boggle) {
             userWords.push_back(trim(toUpperCase(newWord)));
 			score += 1;
             cout << "You found a new word: " << newWord << endl;
-			continue;
 		}
 		else {
 			cout << "That was not a valid english word! Try again!" << endl;
@@ -85,9 +94,9 @@ bool isWordInBoard(string newWord, const Grid<string> grid){
     while(grid.inBounds(row,col)){
         while(grid.inBounds(row,col)){
             char compChar = *grid.get(row,col).c_str();
-            cout << compChar << " " << newWord << endl;
+            // cout << compChar << " " << newWord << endl;
             if(newWord.at(0) == compChar){
-                cout << "FIRST LETTER" << endl;
+                // cout << "FIRST LETTER" << endl;
                 if(findCompleteWord(newWord, grid, row, col, searchedPositions)){
                     return true;
                 }
@@ -103,7 +112,7 @@ bool isWordInBoard(string newWord, const Grid<string> grid){
 bool findCompleteWord(string word, const Grid<string> grid, int row, int col, vector<pair<int, int>> &searchedPositions){
     searchedPositions.push_back(make_pair(row, col));
     word.erase(word.begin());
-    cout << word << endl;
+    //cout << word << endl;
     if(word.length() == 0){
         return true;
     }
@@ -112,11 +121,11 @@ bool findCompleteWord(string word, const Grid<string> grid, int row, int col, ve
         for(int currentCol = col-1; currentCol < col+2; ++currentCol){
             if(!grid.inBounds(0, currentCol)) continue;
             if(alreadySearched(currentRow, currentCol, searchedPositions)) {
-                cout << grid.get(currentRow, currentCol) << " " << "alreadySearched!" << endl;
+                // cout << grid.get(currentRow, currentCol) << " " << "alreadySearched!" << endl;
                 continue;
             }
             if(word.at(0) == *grid.get(currentRow, currentCol).c_str() && findCompleteWord(word, grid, currentRow, currentCol, searchedPositions)) {
-                cout << "YEE B0I!!" << endl;
+                // cout << "YEE B0I!!" << endl;
                 return true;
             }
         }
@@ -170,7 +179,7 @@ void botFindCompleteWord(string prefix, Boggle *boggle, int row, int col, vector
         for(int currentCol = col-1; currentCol < col+2; ++currentCol){
             if(!boggle->getBoard().inBounds(0, currentCol)) continue;
             if(alreadySearched(currentRow, currentCol, searchedPositions)) {
-                cout << boggle->getBoard().get(currentRow, currentCol) << " " << "alreadySearched!" << endl;
+                // cout << boggle->getBoard().get(currentRow, currentCol) << " " << "alreadySearched!" << endl;
                 continue;
             }
             string tempPrefix = prefix;
@@ -198,7 +207,6 @@ void botFindCompleteWord(string prefix, Boggle *boggle, int row, int col, vector
  * Determines whether or not the entered word is in the english dictionary
 */
 bool isDictionaryWord(string word) {
-    // TODO: implement the binary search function to do this
     for (string dicWord: lexicon){
         if(word == dicWord) return true;
     }
@@ -212,9 +220,7 @@ bool isDictionaryWord(string word) {
  */
 bool isWordShort(string &newWord, const unsigned minLength){
     if (newWord.length() < minLength){
-        clearConsole();
-        cout << "Words that you enter must be at least " << minLength << " characters long." << endl;
-        cout << "Please try again!" << endl;
+
         return true;
     }
     return false;
@@ -226,11 +232,8 @@ bool isWordShort(string &newWord, const unsigned minLength){
 bool isWordInList(string &newWord, vector<string> &userWords){
     string uppercaseWord = trim(toUpperCase(newWord));
     for (string word : userWords) {
-        cout << endl << word << " + " << newWord << endl;
+        // cout << endl << word << " + " << newWord << endl;
         if (word == uppercaseWord) {
-            clearConsole();
-            cout << "You've already entered that word before!" << endl;
-            cout << "Please enter a new word or end your turn!" << endl << endl;
             return true;
         }
     }
