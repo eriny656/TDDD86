@@ -58,21 +58,97 @@ HuffmanNode* buildEncodingTree(const map<int, int> &freqTable) {
 }
 
 map<int, string> buildEncodingMap(HuffmanNode* encodingTree) {
-    // TODO: implement this function
     map<int, string> encodingMap;
+    if(encodingTree == nullptr)
+    {
+        return encodingMap;
+    }
+    else if(encodingTree->isLeaf())
+    {
+        encodingMap[encodingTree->character] = "";
+        return encodingMap;
+    }
+
+    map<int, string> leftMap = buildEncodingMap(encodingTree->zero);
+    for(pair<int, string> pr: leftMap)
+    {
+        leftMap[pr.first] = "0" + pr.second;
+    }
+
+    map<int, string> rightMap = buildEncodingMap(encodingTree->one);
+    for(pair<int, string> pr: rightMap)
+    {
+        rightMap[pr.first] = "1" + pr.second;
+    }
+
+    encodingMap.insert(leftMap.begin(), leftMap.end());
+    encodingMap.insert(rightMap.begin(), rightMap.end());
+
     return encodingMap;
 }
 
 void encodeData(istream& input, const map<int, string> &encodingMap, obitstream& output) {
-    // TODO: implement this function
+    char c;
+    string encoding;
+
+    while(input.get(c))
+    {
+        encoding = encodingMap.at(c);
+
+        for(char letter: encoding)
+        {
+            output.writeBit(letter-'0');
+        }
+    }
+    encoding = encodingMap.at(PSEUDO_EOF);
+    for(char letter: encoding)
+    {
+        output.writeBit(letter-'0');
+    }
 }
 
 void decodeData(ibitstream& input, HuffmanNode* encodingTree, ostream& output) {
-    // TODO: implement this function
+    HuffmanNode* currentNode = encodingTree;
+    char c;
+
+    while(true)
+    {
+        c = input.readBit() + '0';
+        if(c == '1')
+            currentNode = currentNode->one;
+        else if (c == '0')
+            currentNode = currentNode->zero;
+
+        if(currentNode->isLeaf())
+        {
+            if(currentNode->character == PSEUDO_EOF)
+                break;
+            output << (char)currentNode->character;
+            currentNode = encodingTree;
+        }
+    }
 }
 
 void compress(istream& input, obitstream& output) {
-    // TODO: implement this function
+    map<int, int> frequencyTable = buildFrequencyTable(input);
+    HuffmanNode* tree = buildEncodingTree(frequencyTable);
+    map<int, string> encodingMap = buildEncodingMap(tree);
+
+    output << '{';
+    stringstream ss;
+    for(pair <int, string> pr : encodingMap) {
+        ss << to_string(pr.first);
+        ss << ':';
+        ss << pr.second;
+        ss << ', ';
+    }
+    string out;
+    ss >> out;
+    out.erase(out.length()-2, out.length());
+    output << out;
+    output << '}';
+
+    encodeData(input, encodingMap, output);
 }
 
 void decompress(ibitstream& input, ostream& output) {
