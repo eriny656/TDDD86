@@ -135,7 +135,7 @@ void compress(istream& input, obitstream& output) {
     map<int, string> encodingMap = buildEncodingMap(tree);
 
     stringstream ss;
-    for(pair <int, string> pr : encodingMap) {
+    for(pair <int, int> pr : frequencyTable) {
         ss << to_string(pr.first);
         ss << ':';
         ss << pr.second;
@@ -143,10 +143,14 @@ void compress(istream& input, obitstream& output) {
     }
     string out;
     ss >> out;
-    out.erase(out.length()-2, out.length());
+    out.erase(out.length()-1, out.length());
     output << '{' << out << '}';
 
+    input.clear();
+    input.seekg(0,ios::beg);
+
     encodeData(input, encodingMap, output);
+    freeTree(tree);
 }
 
 map<int, int> mappify(string const& s)
@@ -189,18 +193,24 @@ void decompress(ibitstream& input, ostream& output) {
         input.get(c);
     }
 
-    cout << "mapString: " << mapString << endl;
-
     freqTable = mappify(mapString);
-    for(pair<int, int> p: freqTable) {
-        cout << "char: " << p.first << ", count: " << p.second << endl;
+    for(pair<int, int> p : freqTable) {
+        cout << "char: " << p.first << "count: " << p.second << endl;
     }
-
     encodingTree = buildEncodingTree(freqTable);
 
     decodeData(input, encodingTree, output);
+    freeTree(encodingTree);
 }
 
 void freeTree(HuffmanNode* node) {
-    // TODO: implement this function
+    if(node == nullptr) return;
+    if(node->isLeaf()){
+        delete node;
+        return;
+    }
+
+    freeTree(node->zero);
+    freeTree(node->one);
+    delete node;
 }
