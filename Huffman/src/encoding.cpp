@@ -134,25 +134,71 @@ void compress(istream& input, obitstream& output) {
     HuffmanNode* tree = buildEncodingTree(frequencyTable);
     map<int, string> encodingMap = buildEncodingMap(tree);
 
-    output << '{';
     stringstream ss;
     for(pair <int, string> pr : encodingMap) {
         ss << to_string(pr.first);
         ss << ':';
         ss << pr.second;
-        ss << ', ';
+        ss << ',';
     }
     string out;
     ss >> out;
     out.erase(out.length()-2, out.length());
-    output << out;
-    output << '}';
+    output << '{' << out << '}';
 
     encodeData(input, encodingMap, output);
 }
 
+map<int, int> mappify(string const& s)
+{
+    map<int, int> m;
+
+    string::size_type key_pos = 0;
+    string::size_type key_end;
+    string::size_type val_pos;
+    string::size_type val_end;
+
+    while((key_end = s.find(':', key_pos)) != string::npos)
+    {
+        if((val_pos = s.find_first_not_of(":", key_end)) == string::npos)
+            break;
+
+        val_end = s.find(',', val_pos);
+        m.emplace(stoi(s.substr(key_pos, key_end - key_pos)), stoi(s.substr(val_pos, val_end - val_pos)));
+
+        key_pos = val_end;
+        if(key_pos != string::npos)
+            ++key_pos;
+    }
+
+    return m;
+}
+
 void decompress(ibitstream& input, ostream& output) {
-    // TODO: implement this function
+    map<int, int> freqTable;
+    HuffmanNode* encodingTree;
+    char c;
+    string mapString;
+
+    // Eliminate first { character before loop
+    input.get(c);
+    input.get(c);
+
+    while(c != '}') {
+        mapString += c;
+        input.get(c);
+    }
+
+    cout << "mapString: " << mapString << endl;
+
+    freqTable = mappify(mapString);
+    for(pair<int, int> p: freqTable) {
+        cout << "char: " << p.first << ", count: " << p.second << endl;
+    }
+
+    encodingTree = buildEncodingTree(freqTable);
+
+    decodeData(input, encodingTree, output);
 }
 
 void freeTree(HuffmanNode* node) {
