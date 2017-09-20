@@ -13,8 +13,9 @@
  */
 TileList::TileList()
 {
+    allocatedSize = 10;
     size = 0;
-    tileArray = new Tile[size];
+    tileArray = new Tile[allocatedSize];
 }
 
 
@@ -37,13 +38,18 @@ TileList::~TileList()
  */
 void TileList::addTile(Tile tile)
 {
-    Tile *tmpArray = new Tile[++size];
-    cout << size << endl;
-    for (int var = 0; var < size-1; ++var) {
-        tmpArray[var] = tileArray[var];
+    size++;
+    if(size == allocatedSize) {
+        allocatedSize *= 2;
+        Tile* tmpArray = new Tile[allocatedSize];
+        copy(tileArray, tileArray+size, tmpArray);
+        tmpArray[size-1] = tile;
+        delete [] tileArray;
+        tileArray = tmpArray;
+    } else {
+        tileArray[size-1] = tile;
     }
-    tmpArray[size-1] = tile;
-    tileArray = tmpArray;
+    cout << size << endl;
 }
 
 

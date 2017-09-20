@@ -37,6 +37,13 @@ Tour::Tour(Point a, Point b, Point c, Point d)
  */
 Tour::~Tour()
 {
+    Node* tempNode = mainNode->next;
+    Node* nextNode;
+    while(tempNode != mainNode){
+        nextNode = tempNode->next;
+        delete tempNode;
+        tempNode = nextNode;
+    }
     delete mainNode;
 }
 
@@ -138,6 +145,7 @@ void Tour::insertNearest(Point p)
     Node *tmpNode = mainNode->next;
 
     if(tmpNode == nullptr){
+        delete mainNode;
         mainNode = new Node(p, nullptr);
         mainNode->next = mainNode;
         return;
@@ -173,6 +181,7 @@ void Tour::insertSmallest(Point p)
     Node *tmpNode = mainNode->next;
 
     if(tmpNode == nullptr){
+        delete mainNode;
         mainNode = new Node(p, nullptr);
         mainNode->next = mainNode;
         return;

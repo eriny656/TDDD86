@@ -63,7 +63,8 @@ private:
     Tile *tileArray;
     // Contains the size of the array
     int size;
-
+    // Allocated size
+    int allocatedSize;
 };
 
 #endif // TILELIST_H
