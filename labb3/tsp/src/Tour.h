@@ -21,13 +21,13 @@ public:
     /* The destructor for the tour object*/
     ~Tour();
     /* Print the tour to standard output*/
-    void show();
+    void show() const;
     /* Draw the tour on scene */
-    void draw(QGraphicsScene* scene);
+    void draw(QGraphicsScene* scene) const;
     /* Returns the number of points on tour*/
-    int size();
+    int size() const;
     /* Returns the total distance of the tour*/
-    double distance();
+    double distance() const;
     /* Insert p using the nearest neighbour heuristic*/
     void insertNearest(Point p);
     /* Insert p using the smallest increase heuristic*/

@@ -12,12 +12,8 @@
 #include <array>
 
 
-/*
- * The Tour constructor
- */
-Tour::Tour()
-{
-    mainNode = new Node(Point(0,0), nullptr);
+Tour::Tour() {
+    mainNode = new Node(Point(0,0));
 }
 
 Tour::Tour(Point a, Point b, Point c, Point d)
@@ -32,9 +28,6 @@ Tour::Tour(Point a, Point b, Point c, Point d)
     mainNode = nodeA;
 }
 
-/*
- * The Tour destructor
- */
 Tour::~Tour()
 {
     Node* tempNode = mainNode->next;
@@ -47,20 +40,16 @@ Tour::~Tour()
     delete mainNode;
 }
 
-/*
- * Prints out the information of each Node in the tour.
- */
-void Tour::show()
+void Tour::show() const
 {
     Node *tmpNode = mainNode->next;
     cout << mainNode->toString() << endl;
 
-    if(tmpNode == nullptr){
-        return;
-    }
-    while(tmpNode != mainNode){
-        cout << tmpNode->toString() << endl;
-        tmpNode = tmpNode->next;
+    if(tmpNode != nullptr){
+        while(tmpNode != mainNode){
+            cout << tmpNode->toString() << endl;
+            tmpNode = tmpNode->next;
+        }
     }
 }
 
@@ -71,18 +60,17 @@ void Tour::show()
  *                  a pointer to the scene we
  *                  can draw our nodes onto.
  */
-void Tour::draw(QGraphicsScene *scene)
+void Tour::draw(QGraphicsScene *scene) const
 {
     Node *tmpNode = mainNode->next;
 
-    if(tmpNode == nullptr){
-        return;
+    if(tmpNode != nullptr){
+        do{
+            tmpNode->point.drawTo(tmpNode->next->point, scene);
+            tmpNode = tmpNode->next;
+        }
+        while(tmpNode != mainNode->next);
     }
-    do{
-        tmpNode->point.drawTo(tmpNode->next->point, scene);
-        tmpNode = tmpNode->next;
-    }
-    while(tmpNode != mainNode->next);
 }
 
 /*
@@ -91,7 +79,7 @@ void Tour::draw(QGraphicsScene *scene)
  *  * return: integer   an integer stating the amount
  *                      of nodes in the tour.
  */
-int Tour::size()
+int Tour::size() const
 {
     Node *tmpNode = mainNode->next;
     int size = 0;
@@ -114,7 +102,7 @@ int Tour::size()
  *  * return: double    a double representing the
  *                      total distance.
  */
-double Tour::distance()
+double Tour::distance() const
 {
     Node *tmpNode = mainNode->next;
     double distance = 0;
@@ -148,24 +136,22 @@ void Tour::insertNearest(Point p)
         delete mainNode;
         mainNode = new Node(p, nullptr);
         mainNode->next = mainNode;
-        return;
-    }
+    } else {
+        double shortestDistance = mainNode->point.distanceTo(p);
+        Node *nearestNode = mainNode;
+        double distance;
 
-    double shortestDistance = mainNode->point.distanceTo(p);
-    Node *nearestNode = mainNode;
-    double distance;
-
-    while(tmpNode != mainNode) {
-        distance = tmpNode->point.distanceTo(p);
-        if(distance < shortestDistance){
-            nearestNode = tmpNode;
-            shortestDistance = distance;
+        while(tmpNode != mainNode) {
+            distance = tmpNode->point.distanceTo(p);
+            if(distance < shortestDistance){
+                nearestNode = tmpNode;
+                shortestDistance = distance;
+            }
+            tmpNode = tmpNode->next;
         }
-        tmpNode = tmpNode->next;
+        Node *newNode = new Node(p, nearestNode->next);
+        nearestNode->next = newNode;
     }
-    Node *newNode = new Node(p, nearestNode->next);
-    nearestNode->next = newNode;
-    return;
 }
 
 /*
@@ -184,25 +170,23 @@ void Tour::insertSmallest(Point p)
         delete mainNode;
         mainNode = new Node(p, nullptr);
         mainNode->next = mainNode;
-        return;
-    }
+    } else {
+        double shortestDifference = -1;
+        double difference;
 
-    double shortestDifference = -1;
-    double difference;
+        Node *nearestNode = mainNode;
+        while(tmpNode != mainNode) {
+            difference = (tmpNode->point.distanceTo(p) +
+                          p.distanceTo(tmpNode->next->point)) -
+                    tmpNode->point.distanceTo(tmpNode->next->point);
 
-    Node *nearestNode = mainNode;
-    while(tmpNode != mainNode) {
-        difference = (tmpNode->point.distanceTo(p) +
-                      p.distanceTo(tmpNode->next->point)) -
-                tmpNode->point.distanceTo(tmpNode->next->point);
-
-        if(difference < shortestDifference || shortestDifference == -1){
-            nearestNode = tmpNode;
-            shortestDifference = difference;
+            if(difference < shortestDifference || shortestDifference == -1){
+                nearestNode = tmpNode;
+                shortestDifference = difference;
+            }
+            tmpNode = tmpNode->next;
         }
-        tmpNode = tmpNode->next;
+        Node *newNode = new Node(p, nearestNode->next);
+        nearestNode->next = newNode;
     }
-    Node *newNode = new Node(p, nearestNode->next);
-    nearestNode->next = newNode;
-    return;
 }

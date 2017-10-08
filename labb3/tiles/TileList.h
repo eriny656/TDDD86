@@ -33,20 +33,20 @@ public:
     /*
      * Draws all tiles in the list in the order of their appearance.
      */
-    void drawAll(QGraphicsScene* scene);
+    void drawAll(QGraphicsScene* scene) const;
     /*
      * Returns the index of the top tile at the given x, y coordinate.
      * If there is no tile, returns -1
      */
-    int indexOfTopTile(int x, int y);
+    int indexOfTopTile(int x, int y) const;
     /*
      * If the position is covered by a tile, the tile is shifted to the bottom of the list
      */
-    void lower(int x, int y);
+    void lower(int x, int y) const;
     /*
      * If the position is covered by a tile, the tile is shifted to the top of the list
      */
-    void raise(int x, int y);
+    void raise(int x, int y) const;
     /*
      * Removes the top tile at the given x, y coordinate
      * Reorganizes the remaining elements

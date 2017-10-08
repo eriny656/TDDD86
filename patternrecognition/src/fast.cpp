@@ -47,13 +47,14 @@ void brute(int &N, vector<Point> &points, QGraphicsScene *scene, QApplication &a
     }
 }
 
-void fast(int &N, vector<Point> &points, QGraphicsScene *scene, QApplication &a){
+void fast(vector<Point> &points, QGraphicsScene *scene, QApplication &a){
     int seqPoints; // Amount of points following a line from origin.
     while(points.size() > 3) {
         seqPoints = 0;
         Point p = points.back(); // Our origin.
         Point prevPoint = points.back();
         points.pop_back();
+
         sort(points.begin(), points.end(), [p](Point a, Point b){
            return p.slopeTo(a) < p.slopeTo(b);
         });
@@ -124,8 +125,9 @@ int main(int argc, char *argv[]) {
     sort(points.begin(), points.end());
     auto begin = chrono::high_resolution_clock::now();
 
+    // Change comment position to use either pattern recognition algorithm
     // brute(N, points, scene, a);
-    fast(N, points, scene, a);
+    fast(points, scene, a);
 
     auto end = chrono::high_resolution_clock::now();
     cout << "Computing line segments took "

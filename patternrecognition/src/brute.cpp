@@ -124,8 +124,8 @@ int main(int argc, char *argv[]) {
     sort(points.begin(), points.end());
     auto begin = chrono::high_resolution_clock::now();
 
-    brute(N, points, scene, a);
-    // fast(N, points, scene, a);
+    //brute(N, points, scene, a);
+    fast(N, points, scene, a);
 
     auto end = chrono::high_resolution_clock::now();
     cout << "Computing line segments took "

@@ -28,6 +28,6 @@
  *
  **********************************************************************/
 
-Brute:
+Brute: O(n^4) är den värstafallstiden (i komplexitet) då den består utav 4 nästlade 'for'-loopar som itererar igenom hela punktlistan. 
 
-Sortering:
+Sortering: O(n^2 * log2(n)) är värstafallstiden (i komplexitet) då 'sort' funktionen har en komplexitet på N*log2(N) och vi kommer att köra den N antal gånger i 'while'-loopen.

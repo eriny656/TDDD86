@@ -1,14 +1,11 @@
-// This is the CPP file you will edit and turn in.
-// Also remove these comments here and add your own, along with
-// comments on every function and on complex code sections.
-// TODO: remove this comment header
+// sambl126
+// eriny656
 
 #include "encoding.h"
 #include <stdio.h>
 #include <math.h>
 #include <queue>
 #include <iterator>
-// TODO: include any other headers you need
 
 bool inMap(int&, map<int, int>&);
 
@@ -143,7 +140,7 @@ void compress(istream& input, obitstream& output) {
     }
     string out;
     ss >> out;
-    out.erase(out.length()-1, out.length());
+    out.erase(out.length()-1, out.length()); // Remove trailing comma
     output << '{' << out << '}';
 
     input.clear();
@@ -194,9 +191,6 @@ void decompress(ibitstream& input, ostream& output) {
     }
 
     freqTable = mappify(mapString);
-    for(pair<int, int> p : freqTable) {
-        cout << "char: " << p.first << "count: " << p.second << endl;
-    }
     encodingTree = buildEncodingTree(freqTable);
 
     decodeData(input, encodingTree, output);
@@ -204,13 +198,11 @@ void decompress(ibitstream& input, ostream& output) {
 }
 
 void freeTree(HuffmanNode* node) {
-    if(node == nullptr) return;
-    if(node->isLeaf()){
+    if(node != nullptr) {
+        if(!node->isLeaf()){
+            freeTree(node->zero);
+            freeTree(node->one);
+        }
         delete node;
-        return;
     }
-
-    freeTree(node->zero);
-    freeTree(node->one);
-    delete node;
 }

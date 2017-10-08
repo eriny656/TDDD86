@@ -7,7 +7,6 @@
 
 #include "TileList.h"
 
-
 /*
  * The TileList constructor.
  */
@@ -42,14 +41,13 @@ void TileList::addTile(Tile tile)
     if(size == allocatedSize) {
         allocatedSize *= 2;
         Tile* tmpArray = new Tile[allocatedSize];
-        copy(tileArray, tileArray+size, tmpArray);
-        tmpArray[size-1] = tile;
+        copy(tileArray, tileArray + size, tmpArray);
+        tmpArray[size - 1] = tile;
         delete [] tileArray;
         tileArray = tmpArray;
     } else {
-        tileArray[size-1] = tile;
+        tileArray[size - 1] = tile;
     }
-    cout << size << endl;
 }
 
 
@@ -60,9 +58,9 @@ void TileList::addTile(Tile tile)
  *                  a pointer to the scene we
  *                  can draw the tiles to.
  */
-void TileList::drawAll(QGraphicsScene* scene)
+void TileList::drawAll(QGraphicsScene* scene) const
 {
-    for (int var = 0; var < size; ++var) { // Double check -1
+    for (int var = 0; var < size; ++var) {
         tileArray[var].draw(scene);
     }
 }
@@ -87,12 +85,10 @@ void TileList::drawAll(QGraphicsScene* scene)
  *                      at the given coordinates.
  *                      Returns -1 if no tile was found.
  */
-int TileList::indexOfTopTile(int x, int y)
+int TileList::indexOfTopTile(int x, int y) const
 {
     for (int var = size-1; var >= 0; --var) {
         if(tileArray[var].contains(x, y)) {
-            cout << tileArray[var].toString() << endl;
-            cout << var << endl;
             return var;
         }
     }
@@ -115,28 +111,26 @@ int TileList::indexOfTopTile(int x, int y)
  *                  investigating
  *
  */
-void TileList::raise(int x, int y)
+void TileList::raise(int x, int y) const
 {
     int index = indexOfTopTile(x, y);
     if(index != -1) {
         Tile tempTile = tileArray[index];
         for (index; index < size-1; ++index) {
-            tileArray[index] = tileArray[index+1];
+            tileArray[index] = tileArray[index + 1];
         }
-        cout << index << endl;
         tileArray[index] = tempTile;
     }
 }
 
-void TileList::lower(int x, int y)
+void TileList::lower(int x, int y) const
 {
     int index = indexOfTopTile(x, y);
     if(index != -1) {
         Tile tempTile = tileArray[index];
         for (index; index > 0; --index) {
-            tileArray[index] = tileArray[index-1];
+            tileArray[index] = tileArray[index - 1];
         }
-        cout << index << endl;
         tileArray[index] = tempTile;
     }
 }
@@ -145,14 +139,9 @@ void TileList::remove(int x, int y)
 {
     int tileIndex = indexOfTopTile(x, y);
     if(tileIndex != -1){
-        Tile *tmpArray = new Tile[--size];
-        for (int index = tileIndex-1; index >= 0; --index){
-            tmpArray[index] = tileArray[index];
-        }
         for (int index = tileIndex; index < size; ++index){
-            tmpArray[index] = tileArray[index+1];
+            tileArray[index] = tileArray[index + 1];
         }
-        tileArray = tmpArray;
     }
 }
 
