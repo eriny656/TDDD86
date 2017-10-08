@@ -10,31 +10,12 @@
 #define _bogglemain_h
 
 #include "Boggle.h"
-#include "lexicon.h"
-#include <vector>
 #include <string>
 using namespace std;
 
-const Lexicon lexicon("EnglishWords.dat");
-
 void intro();
-void playOneGame(Boggle *boggle);
+void playOneGame(Boggle boggle);
 bool yesOrNo(string prompt);
 void clearConsole();
-
-Boggle* generateUserBoard(unsigned);
-void printBoard(Boggle*);
-
-string showWords(vector<string>&);
-bool isDictionaryWord(string);
-bool isWordShort(string&, const unsigned);
-bool isWordInList(string&, vector<string>&);
-
-bool isWordInBoard(string, const Grid<string>);
-bool findCompleteWord(string, const Grid<string>, int, int, vector<pair<int, int>>&);
-bool alreadySearched(int&, int&, vector<pair<int, int>>&);
-
-vector<string> botPlay(Boggle*);
-void botFindCompleteWord(string, Boggle*, int, int, vector<pair<int, int>>&, vector<string>&, Lexicon);
 
 #endif

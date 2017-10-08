@@ -1,34 +1,46 @@
-// You will edit and turn in this CPP file.
-// Also remove these comments here and add your own.
-// TODO: remove this comment header and replace with your own
+// sambl126
+// eriny656
 
 #include <cstdlib>
 #include <iostream>
 #include <iomanip>
 #include <sstream>
 #include <math.h>
+#include <set>
 #include "bogglemain.h"
 #include "strlib.h"
 #include <utility>
-// TODO: include any other header files you need
+
+const Lexicon lexicon("EnglishWords.dat");
+const int INT_MAX = 2147483647;
+string generateUserBoardString(unsigned area);
+void printBoard(Boggle boggle);
+string showWords(set<string> &words);
 
 /*
  * Plays one game of Boggle using the given boggle game state object.
  */
-void playOneGame(Boggle* boggle) {
-    vector<string> userWords;
+void playOneGame(Boggle boggle) {
     string newWord;
-    int score = 0;
     clearConsole();
+
+    int area = boggle.getBoardArea();
+
+    bool randBoard = yesOrNo("Do you want to generate a random board? ");
+    if(!randBoard){
+        boggle.buildBoard(generateUserBoardString(area));
+    }
 
     while (true) {
 		// Printing the info on user's turn.
 		cout << "It's your turn!" << endl;
 		printBoard(boggle);
-        if(userWords.size() > 0){
+
+        set<string> userWords = boggle.getUserWords();
+        if(!userWords.empty()){
             cout << "Your words (" << userWords.size() << "): " << showWords(userWords) << endl;
         }
-		cout << endl << "Your score: " << score << endl;
+        cout << endl << "Your score: " << score(userWords) << endl;
 
 		cout << "Type a word (or press ENTER to end your turn): ";
 		getline(cin, newWord);
@@ -38,22 +50,22 @@ void playOneGame(Boggle* boggle) {
         cout << endl;
 
         // If the word is not valid length, loop again
-        if(isWordShort(newWord, boggle->MIN_WORD_LENGTH)) {
+        if(boggle.isWordShort(newWord)) {
             clearConsole();
-            cout << "Words that you enter must be at least " << boggle->MIN_WORD_LENGTH << " characters long." << endl;
+            cout << "Words that you enter must be at least " << boggle.MIN_WORD_LENGTH << " characters long." << endl;
             cout << "Please try again!" << endl;
             continue;
         }
 
         // if the word already has been found, loop again
-        if(isWordInList(newWord, userWords)) {
+        if(userWords.find(newWord) != userWords.end()) {
             clearConsole();
             cout << "You've already entered that word before!" << endl;
             cout << "Please enter a new word or end your turn!" << endl << endl;
             continue;
         }
 
-        if(!isWordInBoard(trim(toUpperCase(newWord)), boggle->getBoard())){
+        if(!boggle.isWordInBoard(trim(toUpperCase(newWord)))){
             clearConsole();
             cout << "That word is not in the board" << endl << endl;
             continue;
@@ -61,24 +73,20 @@ void playOneGame(Boggle* boggle) {
 
         // if the word is not in the dictionary, loop again
         if (lexicon.contains(newWord)) {
-            // clearConsole();
-            userWords.push_back(trim(toUpperCase(newWord)));
-			score += 1;
+            boggle.insertUserWord(trim(toUpperCase(newWord)));
             cout << "You found a new word: " << newWord << endl;
 		}
 		else {
 			cout << "That was not a valid english word! Try again!" << endl;
 		}
 	}
-		
-	// Now it is the computer player's turn.
-	// Implement that here.
+
     cout << endl << "It's my turn!" << endl;
-    vector<string> botWords = botPlay(boggle);
+    set<string> botWords = boggle.findBotWords(lexicon);
     cout << "My words (" << botWords.size() << "): ";
     cout << showWords(botWords) << endl;
-    cout << "My score: " << botWords.size() << endl;
-    if(botWords.size() > score){
+    cout << "My score: " << score(botWords) << endl;
+    if(score(botWords) > score(userWords)){
         cout << "BOTWIN" << endl;
     }
     else{
@@ -87,121 +95,46 @@ void playOneGame(Boggle* boggle) {
 
 }
 
-bool isWordInBoard(string newWord, const Grid<string> grid){
-    int row = 0;
-    int col = 0;
-    vector<pair<int, int>> searchedPositions;
-    while(grid.inBounds(row,col)){
-        while(grid.inBounds(row,col)){
-            char compChar = *grid.get(row,col).c_str();
-            // cout << compChar << " " << newWord << endl;
-            if(newWord.at(0) == compChar){
-                // cout << "FIRST LETTER" << endl;
-                if(findCompleteWord(newWord, grid, row, col, searchedPositions)){
-                    return true;
-                }
-            }
-            ++col;
-        }
-        col = 0;
-        ++row;
+int score(const set<string> words) {
+    int points = 0;
+    for(string word: words) {
+        points += word.length() - 3;
     }
-    return false;
+    return points;
 }
 
-bool findCompleteWord(string word, const Grid<string> grid, int row, int col, vector<pair<int, int>> &searchedPositions){
-    searchedPositions.push_back(make_pair(row, col));
-    word.erase(word.begin());
-    //cout << word << endl;
-    if(word.length() == 0){
-        return true;
+/*
+ * Permits the user to create a custom board to play on
+ */
+string generateUserBoardString(unsigned area){
+    const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+    string boardString;
+
+    cout << endl <<  "Please enter the string of " << area << " characters you wish to use as your board" << endl;
+
+
+checkLength:
+    cin >> boardString;
+    // clear the input buffer
+    cin.ignore(INT_MAX, '\n');
+    boardString = trim(toUpperCase(boardString));
+    if(boardString.length() != area){
+        cout << "Please enter a string of length " << area << " characters!" << endl;
+        goto checkLength;
     }
-    for(int currentRow = row-1; currentRow < row+2; ++currentRow){
-        if(!grid.inBounds(currentRow, 0)) continue;
-        for(int currentCol = col-1; currentCol < col+2; ++currentCol){
-            if(!grid.inBounds(0, currentCol)) continue;
-            if(alreadySearched(currentRow, currentCol, searchedPositions)) {
-                // cout << grid.get(currentRow, currentCol) << " " << "alreadySearched!" << endl;
-                continue;
-            }
-            if(word.at(0) == *grid.get(currentRow, currentCol).c_str() && findCompleteWord(word, grid, currentRow, currentCol, searchedPositions)) {
-                // cout << "YEE B0I!!" << endl;
-                return true;
-            }
+    for(char character: boardString){
+        int charPos = ALPHABET.find(character, 0);
+        if(charPos==string::npos){
+            cout << "Please enter a string of characters in the english alphabet!" << endl;
+            cin.ignore(INT_MAX, '\n');
+            cin >> boardString;
+            boardString = trim(toUpperCase(boardString));
+            goto checkLength;
         }
     }
-    searchedPositions.pop_back();
-    return false;
+
+    return boardString;
 }
-
-bool alreadySearched(int &y , int &x, vector<pair<int, int>> &sp){
-    for(pair<int, int> position: sp){
-        if(y == position.first && x == position.second) {
-            return true;
-        }
-    }
-    return false;
-}
-
-vector<string> botPlay(Boggle *boggle) {
-    Grid<string> grid = boggle->getBoard();
-    vector<string> foundWords;
-    Lexicon botLexicon("EnglishWords.dat");
-
-    int row = 0;
-    int col = 0;
-    vector<pair<int, int>> searchedPositions;
-    while(grid.inBounds(row,col)){
-        while(grid.inBounds(row,col)){
-            string prefix = grid.get(row,col).c_str();
-            botFindCompleteWord(prefix, boggle, row, col, searchedPositions, foundWords, botLexicon);
-            ++col;
-        }
-        col = 0;
-        ++row;
-    }
-    return foundWords;
-}
-
-void botFindCompleteWord(string prefix, Boggle *boggle, int row, int col, vector<pair<int, int>> &searchedPositions, vector<string> &foundWords, Lexicon botLexicon){
-    //word.erase(word.begin());
-    //cout << word << endl;
-    //if(word.length() == 0){
-    //    return true;
-    //}
-    if(!botLexicon.containsPrefix(prefix)) {
-        return;
-    }
-    searchedPositions.push_back(make_pair(row, col));
-
-    for(int currentRow = row-1; currentRow < row+2; ++currentRow){
-        if(!boggle->getBoard().inBounds(currentRow, 0)) continue;
-        for(int currentCol = col-1; currentCol < col+2; ++currentCol){
-            if(!boggle->getBoard().inBounds(0, currentCol)) continue;
-            if(alreadySearched(currentRow, currentCol, searchedPositions)) {
-                // cout << boggle->getBoard().get(currentRow, currentCol) << " " << "alreadySearched!" << endl;
-                continue;
-            }
-            string tempPrefix = prefix;
-            tempPrefix.append(boggle->getBoard().get(currentRow, currentCol));
-
-            if(!isWordShort(tempPrefix, boggle->MIN_WORD_LENGTH) && botLexicon.contains(tempPrefix)){
-                if(!isWordInList(tempPrefix, foundWords)) {
-                    foundWords.push_back(tempPrefix);
-                }
-            }
-            botFindCompleteWord(tempPrefix, boggle, currentRow, currentCol, searchedPositions, foundWords, botLexicon);
-        }
-    }
-    searchedPositions.pop_back();
-    return;
-}
-
-
-
-
-
-
 
 /*
  * Determines whether or not the entered word is in the english dictionary
@@ -210,33 +143,6 @@ bool isDictionaryWord(string word) {
     for (string dicWord: lexicon){
         if(word == dicWord) return true;
     }
-
-    return false;
-}
-
-
-/*
- * Returns true if newWord is shorter than minLength
- */
-bool isWordShort(string &newWord, const unsigned minLength){
-    if (newWord.length() < minLength){
-
-        return true;
-    }
-    return false;
-}
-
-/*
- * Returns true if newWord exists in userWords
- */
-bool isWordInList(string &newWord, vector<string> &userWords){
-    string uppercaseWord = trim(toUpperCase(newWord));
-    for (string word : userWords) {
-        // cout << endl << word << " + " << newWord << endl;
-        if (word == uppercaseWord) {
-            return true;
-        }
-    }
     return false;
 }
 
@@ -244,33 +150,33 @@ bool isWordInList(string &newWord, vector<string> &userWords){
  * Creates a string representation of the words that the user already
  * has entered.
  */
-string showWords(vector<string>& words) {
+string showWords(set<string>& words) {
 	string wordString = "{";
-    wordString.append(words.at(0));
-    for (unsigned i = 1; i < words.size(); ++i) {
+    for(string word : words) {
+        wordString.append(word);
         wordString.append(", ");
-        wordString.append(words.at(i));
-	}
-	wordString.append("}");
-
-	return wordString;
+    }
+    if(!words.empty())
+        wordString.erase(wordString.end()-2, wordString.end());
+    wordString.append("}");
+    return wordString;
 }
 
 /*
  * Prints the board that the player is using
  */
-void printBoard(Boggle* boggle){
-    Grid<string> board = boggle->getBoard();
+void printBoard(Boggle boggle){
+    Grid<string> board = boggle.getBoard();
     string printedBoard;
     int ypos;
     int xpos;
 
-    for(unsigned i=0; i<boggle->getBoardArea(); ++i){
-        if(i%boggle->BOARD_SIZE == 0){
+    for(unsigned i=0; i<boggle.getBoardArea(); ++i){
+        if(i%boggle.BOARD_SIZE == 0){
             printedBoard.append("\n");
         }
-        ypos = floor(i/boggle->BOARD_SIZE);
-        xpos = i - (ypos * boggle->BOARD_SIZE);
+        ypos = floor(i/boggle.BOARD_SIZE);
+        xpos = i - (ypos * boggle.BOARD_SIZE);
         printedBoard.append(board.get(ypos, xpos));
     }
 
