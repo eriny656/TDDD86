@@ -111,7 +111,7 @@ int TileList::indexOfTopTile(int x, int y) const
  *                  investigating
  *
  */
-void TileList::raise(int x, int y) const
+void TileList::raise(int x, int y)
 {
     int index = indexOfTopTile(x, y);
     if(index != -1) {
@@ -123,7 +123,7 @@ void TileList::raise(int x, int y) const
     }
 }
 
-void TileList::lower(int x, int y) const
+void TileList::lower(int x, int y)
 {
     int index = indexOfTopTile(x, y);
     if(index != -1) {

@@ -25,7 +25,7 @@ public:
 
     ~GameState();
 
-    GameState operator=(GameState gs);
+    GameState &operator=(const GameState &gs);
 
     /*
      * Clear and redraw entire playing field
@@ -81,7 +81,7 @@ private:
     // private helpers
     bool isEmpty(const Unit& unit) const;
     int countRobotsAt(const Unit& unit) const;
-
+    void clearRobots();
 };
 
 #endif // GAMESTATE_H

@@ -42,11 +42,11 @@ public:
     /*
      * If the position is covered by a tile, the tile is shifted to the bottom of the list
      */
-    void lower(int x, int y) const;
+    void lower(int x, int y);
     /*
      * If the position is covered by a tile, the tile is shifted to the top of the list
      */
-    void raise(int x, int y) const;
+    void raise(int x, int y);
     /*
      * Removes the top tile at the given x, y coordinate
      * Reorganizes the remaining elements

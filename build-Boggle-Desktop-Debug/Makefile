@@ -391,21 +391,41 @@ compiler_clean:
 ####### Compile
 
 Boggle.o: ../boggle/src/Boggle.cpp ../boggle/src/Boggle.h \
-		../boggle/lib/StanfordCPPLib/random.h \
-		../boggle/src/shuffle.h \
 		../boggle/lib/StanfordCPPLib/grid.h \
-		../boggle/lib/StanfordCPPLib/strlib.h
+		../boggle/lib/StanfordCPPLib/strlib.h \
+		../boggle/lib/StanfordCPPLib/lexicon.h \
+		../boggle/lib/StanfordCPPLib/foreach.h \
+		../boggle/lib/StanfordCPPLib/set.h \
+		../boggle/lib/StanfordCPPLib/map.h \
+		../boggle/lib/StanfordCPPLib/stack.h \
+		../boggle/lib/StanfordCPPLib/vector.h \
+		../boggle/lib/StanfordCPPLib/random.h \
+		../boggle/src/shuffle.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o Boggle.o ../boggle/src/Boggle.cpp
 
 bogglemain.o: ../boggle/src/bogglemain.cpp ../boggle/lib/StanfordCPPLib/random.h \
 		../boggle/lib/StanfordCPPLib/strlib.h \
 		../boggle/src/Boggle.h \
+		../boggle/lib/StanfordCPPLib/grid.h \
+		../boggle/lib/StanfordCPPLib/lexicon.h \
+		../boggle/lib/StanfordCPPLib/foreach.h \
+		../boggle/lib/StanfordCPPLib/set.h \
+		../boggle/lib/StanfordCPPLib/map.h \
+		../boggle/lib/StanfordCPPLib/stack.h \
+		../boggle/lib/StanfordCPPLib/vector.h \
 		../boggle/src/bogglemain.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o bogglemain.o ../boggle/src/bogglemain.cpp
 
-boggleplay.o: ../boggle/src/boggleplay.cpp ../boggle/src/Boggle.h \
-		../boggle/src/bogglemain.h \
-		../boggle/lib/StanfordCPPLib/strlib.h
+boggleplay.o: ../boggle/src/boggleplay.cpp ../boggle/src/bogglemain.h \
+		../boggle/src/Boggle.h \
+		../boggle/lib/StanfordCPPLib/grid.h \
+		../boggle/lib/StanfordCPPLib/strlib.h \
+		../boggle/lib/StanfordCPPLib/lexicon.h \
+		../boggle/lib/StanfordCPPLib/foreach.h \
+		../boggle/lib/StanfordCPPLib/set.h \
+		../boggle/lib/StanfordCPPLib/map.h \
+		../boggle/lib/StanfordCPPLib/stack.h \
+		../boggle/lib/StanfordCPPLib/vector.h
 	$(CXX) -c $(CXXFLAGS) $(INCPATH) -o boggleplay.o ../boggle/src/boggleplay.cpp
 
 error.o: ../boggle/lib/StanfordCPPLib/error.cpp ../boggle/lib/StanfordCPPLib/error.h \

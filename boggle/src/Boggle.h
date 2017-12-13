@@ -1,16 +1,14 @@
-// This is the .h file you will edit and turn in.
-// We have provided a minimal skeleton for you,
-// but you must finish it as described in the spec.
-// Also remove these comments here and add your own, as well as on the members.
-// TODO: remove this comment header and replace it with your own
+// sambl126
+// eriny656
 
 #ifndef _boggle_h
 #define _boggle_h
 
 #include <iostream>
 #include <string>
+#include <set>
 #include "grid.h"
-// TODO: include any other header files you need
+#include "lexicon.h"
 
 using namespace std;
 
@@ -26,21 +24,38 @@ public:
 
     ~Boggle();
 
-    void buildBoard(string&);
+    void buildBoard(string);
 
     void shuffleBoard();
 
     Grid<string> getBoard() const;
 
-    unsigned getBoardArea();
+    unsigned getBoardArea() const;
 
     Boggle &operator=(const Boggle&);
 
-    // TODO: decide the public member functions and declare them
+    // Custom functions
+    bool isWordInBoard(string newWord) const;
+
+    bool findCompleteWord(string word, const int row, const int col, set<pair<int, int>> &searchedPositions) const;
+
+    void botFindCompleteWord(string prefix, const int row, const int col, set<pair<int, int>> &searchedPositions, Lexicon botLexicon);
+
+    bool isWordInList(const string &newWord) const;
+
+    bool isWordShort(const string &newWord) const;
+
+    set<string> findBotWords(const Lexicon lex);
+
+    set<string> getUserWords() const;
+
+    void insertUserWord(const string word);
 
 private:
-    // TODO: decide the private member variables/functions and declare them
+    // Custom variables
     Grid<string> board;
+    set<string> userWords;
+    set<string> botWords;
 
 };
 

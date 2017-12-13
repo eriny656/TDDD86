@@ -16,9 +16,9 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <climits>(limits.h)
 #include "random.h"
 #include "strlib.h"
+#include "Boggle.h"
 #include "bogglemain.h"
 
 using namespace std;
@@ -26,21 +26,10 @@ using namespace std;
 int main() {
     intro();
 
-    Boggle *boggle;
-
     // play games repeatedly until user decides to quit
-
+    Boggle boggle;
     while (true) {
-        boggle = new Boggle();
-        int area = boggle->getBoardArea();
-        bool randBoard = yesOrNo("Do you want to generate a random board? ");
-        if(!randBoard){
-            delete boggle;
-            boggle = generateUserBoard(area);
-        }
-
         playOneGame(boggle);
-        delete boggle;
         cout << endl;
         if (!yesOrNo("Play again (Y/N)? ")) {
             break;
@@ -49,43 +38,6 @@ int main() {
 
     cout << "Have a nice day." << endl;
     return 0;
-}
-
-
-/*
- * Permits the user to create a custom board to play on
- */
-Boggle *generateUserBoard(unsigned area){
-    const string ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    string boardString;
-
-    cout << endl <<  "Please enter the string of " << area << endl;
-    cout << "characters you wish to use as your board" << endl;
-    cin >> boardString;
-    cin.ignore(INT_MAX, '\n');
-    boardString = trim(toUpperCase(boardString));
-
-checkLength:
-    if(boardString.length() != area){
-        cout << "Please enter a string of length " << area << " characters!" << endl;
-        // clear the input buffer
-        cin.ignore(INT_MAX, '\n');
-        cin >> boardString;
-        boardString = trim(toUpperCase(boardString));
-        goto checkLength;
-    }
-    for(char character: boardString){
-        int charPos = ALPHABET.find(character, 0);
-        if(charPos==string::npos){
-            cout << "Please enter a string of characters in the english alphabet!" << endl;
-            cin.ignore(INT_MAX, '\n');
-            cin >> boardString;
-            boardString = trim(toUpperCase(boardString));
-            goto checkLength;
-        }
-    }
-
-    return new Boggle(boardString);
 }
 
 /*

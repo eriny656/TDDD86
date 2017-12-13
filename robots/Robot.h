@@ -24,7 +24,9 @@ public:
     void draw(QGraphicsScene* scene) const;
 
     /* Shows if unit is subclass Junk; returns False if not overriden*/
-    virtual bool isJunk();
+    virtual bool isJunk() const;
+
+    virtual Robot *clone();
 };
 
 #endif // ROBOT_H

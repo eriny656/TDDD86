@@ -32,7 +32,11 @@ public:
     bool attacks(const Unit& u) const;
 
     /* Overrides Robot isJunk to return True */
-    bool isJunk();
+    bool isJunk() const;
+
+    /* Overrides Robot clone */
+    Junk *clone();
+
 };
 
 #endif // JUNK_H

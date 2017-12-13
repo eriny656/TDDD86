@@ -24,9 +24,10 @@ bool Junk::attacks(const Unit&) const{
     return false;
 }
 
-bool Junk::isJunk() {
+bool Junk::isJunk() const {
     return true;
 }
 
-
-
+Junk* Junk::clone() {
+    return new Junk(*this);
+}

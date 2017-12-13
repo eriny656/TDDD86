@@ -11,31 +11,40 @@ GameState::GameState(){}
 
 GameState::GameState(int numberOfRobots) {
     for (int i = 0; i < numberOfRobots; i++) {
-        robots.push_back(new Robot());
+        Robot* robot = new Robot();
+        robots.push_back(robot);
     }
     teleportHero();
 }
 
 GameState::GameState(const GameState &gs){
-    this->operator =(gs);
+    // Create new instances of existing units in copy
+    // duplicate value (no "shallow copy")
+
+    // our hero is not a pointer value, so no clone needed
+    this->hero = gs.hero;
+
+    for(Robot *robot: gs.robots) {
+        this->robots.push_back(robot->clone());
+        delete robot;
+    }
 }
 
 GameState::~GameState(){
-    for(auto i = robots.begin(); i != robots.end(); ++i){
-        delete *i;
-    }
+    clearRobots();
 }
 
-GameState GameState::operator=(GameState gs) {
-    robots.clear();
+GameState &GameState::operator=(const GameState &gs) {
+    clearRobots();
 
     // Creates copy of old robots in gs and inserts in new GameState
     for(Robot *r: gs.robots) {
-        this->robots.push_back(new Robot(r->asPoint()));
+        this->robots.push_back(r->clone());
     }
+
     this->hero = gs.hero;
 
-    return 0;
+    return *this;
 }
 
 void GameState::draw(QGraphicsScene *scene) const {
@@ -67,7 +76,9 @@ int GameState::countCollisions() {
         // Will only create junk and give points when
         // there is a collision with a non-junk robot
         if (collision && !robots[i]->isJunk()) {
-            robots[i] = new Junk(*robots[i]);
+            Robot *oldRobot = robots[i];
+            robots[i] = new Junk(*oldRobot);
+            delete oldRobot;
             numberDestroyed++;
         }
     }
@@ -118,4 +129,11 @@ int GameState::countRobotsAt(const Unit& unit) const {
             count++;
     }
     return count;
+}
+
+void GameState::clearRobots() {
+    for(auto i = robots.begin(); i != robots.end(); ++i){
+        delete *i;
+    }
+    robots.clear();
 }
