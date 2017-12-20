@@ -13,7 +13,7 @@ GameState::GameState(int numberOfRobots) {
     for (int i = 0; i < numberOfRobots; i++) {
         Robot *robot = new Robot();
 
-        while(isPositionConflict(robot)) {
+        while(!isEmpty(*robot)) {
             delete robot;
             robot = new Robot();
         }
@@ -21,15 +21,6 @@ GameState::GameState(int numberOfRobots) {
         robots.push_back(robot);
     }
     teleportHero();
-}
-
-bool GameState::isPositionConflict(Robot *robot) {
-    for(Robot *r: robots) {
-        if(robot->at(r))
-            return true;
-    }
-
-    return false;
 }
 
 GameState::GameState(const GameState &gs){

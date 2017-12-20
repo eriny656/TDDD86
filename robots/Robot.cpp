@@ -7,9 +7,7 @@
 #include "constants.h"
 
 Robot::Robot() : Unit() {}
-Robot::Robot(Unit c) : Unit(c) {}
-
-Robot::~Robot(){}
+Robot::Robot(const Unit &c) : Unit(c) {}
 
 void Robot::draw(QGraphicsScene *scene) const {
     Point corner = asPoint();
