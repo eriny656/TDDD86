@@ -15,10 +15,7 @@ public:
     Robot();
 
     /* Constructor at point of parameter Unit */
-    Robot(Unit c);
-
-    /* Destructor */
-    virtual ~Robot();
+    Robot(const Unit &c);
 
     /* Draws Robot to scene */
     void draw(QGraphicsScene* scene) const;

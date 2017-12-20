@@ -15,10 +15,7 @@ public:
     Junk();
 
     /* Construct Junk at point of parameter Robot */
-    Junk(Robot c);
-
-    /* Destructor */
-    ~Junk();
+    Junk(const Robot &c);
 
     /*
     * Draws this junk onto the given QGraphicsScene.
