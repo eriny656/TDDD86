@@ -7,16 +7,13 @@
 #include <queue>
 #include <iterator>
 
-bool inMap(int&, map<int, int>&);
-
 map<int, int> buildFrequencyTable(istream& input) {
     map<int, int> freqTable;
     char character;
-    int asciiChar;
 
     while(input.get(character) ){
-        asciiChar = (int) character;
-        if(inMap(asciiChar, freqTable)) {
+        int asciiChar = character;
+        if(freqTable.find(asciiChar) != freqTable.end()) {
             ++freqTable[asciiChar];
         }
         else {
@@ -28,15 +25,6 @@ map<int, int> buildFrequencyTable(istream& input) {
     return freqTable;
 }
 
-bool inMap(int& i, map<int, int>& m){
-    for(pair<int, int> tempPair : m) {
-        if(tempPair.first == i) {
-            return true;
-        }
-    }
-    return false;
-}
-
 HuffmanNode* buildEncodingTree(const map<int, int> &freqTable) {
    priority_queue<HuffmanNode> huffQueue;
     for(pair<int, int> pr : freqTable) {
@@ -44,9 +32,9 @@ HuffmanNode* buildEncodingTree(const map<int, int> &freqTable) {
     }
 
     while(huffQueue.size() > 1) {
-        HuffmanNode* node1 = new HuffmanNode(huffQueue.top().character, huffQueue.top().count, huffQueue.top().zero, huffQueue.top().one);
+        HuffmanNode* node1 = new HuffmanNode(huffQueue.top());
         huffQueue.pop();
-        HuffmanNode* node2 = new HuffmanNode(huffQueue.top().character, huffQueue.top().count, huffQueue.top().zero, huffQueue.top().one);
+        HuffmanNode* node2 = new HuffmanNode(huffQueue.top());
         huffQueue.pop();
         huffQueue.push(HuffmanNode(NOT_A_CHAR, (node1->count + node2->count), node1, node2));
     }
@@ -67,15 +55,15 @@ map<int, string> buildEncodingMap(HuffmanNode* encodingTree) {
     }
 
     map<int, string> leftMap = buildEncodingMap(encodingTree->zero);
-    for(pair<int, string> pr: leftMap)
+    for(pair<const int, string> &pr: leftMap)
     {
-        leftMap[pr.first] = "0" + pr.second;
+        pr.second = "0" + pr.second;
     }
 
     map<int, string> rightMap = buildEncodingMap(encodingTree->one);
-    for(pair<int, string> pr: rightMap)
+    for(pair<const int, string> &pr: rightMap)
     {
-        rightMap[pr.first] = "1" + pr.second;
+        pr.second = "1" + pr.second;
     }
 
     encodingMap.insert(leftMap.begin(), leftMap.end());
@@ -120,7 +108,9 @@ void decodeData(ibitstream& input, HuffmanNode* encodingTree, ostream& output) {
         {
             if(currentNode->character == PSEUDO_EOF)
                 break;
-            output << (char)currentNode->character;
+
+            char nodeChar = currentNode->character;
+            output << nodeChar;
             currentNode = encodingTree;
         }
     }
@@ -154,10 +144,12 @@ map<int, int> mappify(string const& s)
 {
     map<int, int> m;
 
-    string::size_type key_pos = 0;
-    string::size_type key_end;
-    string::size_type val_pos;
-    string::size_type val_end;
+    using idx = decltype(s.size());
+
+    idx key_pos = 0;
+    idx key_end;
+    idx val_pos;
+    idx val_end;
 
     while((key_end = s.find(':', key_pos)) != string::npos)
     {
@@ -182,12 +174,12 @@ void decompress(ibitstream& input, ostream& output) {
     string mapString;
 
     // Eliminate first { character before loop
-    input.get(c);
-    input.get(c);
+    input >> c;
+    input >> c;
 
     while(c != '}') {
         mapString += c;
-        input.get(c);
+        input >> c;
     }
 
     freqTable = mappify(mapString);

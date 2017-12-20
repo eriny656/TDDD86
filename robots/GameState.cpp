@@ -11,7 +11,15 @@ GameState::GameState(){}
 
 GameState::GameState(int numberOfRobots) {
     for (int i = 0; i < numberOfRobots; i++) {
-        Robot* robot = new Robot();
+        Robot *robot;
+        do {
+            robot = new Robot();
+            for(Robot *r: robots) {
+                if(r->at(*robot))
+                    continue; // If the new robot's position is on another one's, then try again.
+            }
+            break;
+        } while(true);
         robots.push_back(robot);
     }
     teleportHero();
@@ -22,11 +30,10 @@ GameState::GameState(const GameState &gs){
     // duplicate value (no "shallow copy")
 
     // our hero is not a pointer value, so no clone needed
-    this->hero = gs.hero;
+    hero = gs.hero;
 
     for(Robot *robot: gs.robots) {
-        this->robots.push_back(robot->clone());
-        delete robot;
+        robots.push_back(robot->clone());
     }
 }
 
@@ -39,10 +46,10 @@ GameState &GameState::operator=(const GameState &gs) {
 
     // Creates copy of old robots in gs and inserts in new GameState
     for(Robot *r: gs.robots) {
-        this->robots.push_back(r->clone());
+        robots.push_back(r->clone());
     }
 
-    this->hero = gs.hero;
+    hero = gs.hero;
 
     return *this;
 }

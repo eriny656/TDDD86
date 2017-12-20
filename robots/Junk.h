@@ -23,19 +23,19 @@ public:
     /*
     * Draws this junk onto the given QGraphicsScene.
     */
-    void draw(QGraphicsScene* scene) const;
+    void draw(QGraphicsScene* scene) const override;
 
     /* Overrides Robot move function to idle at position */
-    void moveTowards(const Unit& u);
+    void moveTowards(const Unit& u) override;
 
     /* Overrides Robot attacks function to idle */
-    bool attacks(const Unit& u) const;
+    bool attacks(const Unit& u) const override;
 
     /* Overrides Robot isJunk to return True */
-    bool isJunk() const;
+    bool isJunk() const override;
 
     /* Overrides Robot clone */
-    Junk *clone();
+    Junk *clone() override;
 
 };
 
